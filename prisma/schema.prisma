@@ -1,0 +1,119 @@
+// ---------------------------------------------------------------------------
+// FinPessoal — modelagem de referência (Fase 0)
+//
+// Este arquivo documenta o modelo de dados do domínio. Neste ambiente o banco
+// é PostgreSQL gerenciado e as migrations são SQL versionadas em
+// supabase/migrations/, que traduzem exatamente estes modelos.
+//
+// Decisões:
+// - valor sempre POSITIVO; o sinal vive em `tipo` (DEBITO | CREDITO)
+// - Decimal(14,2) — nunca float para dinheiro
+// - @@unique([usuarioId, hashDedupe]) — idempotência do import no banco
+// - usuarioId null em Categoria/RegraCategorizacao = registro default do sistema
+//
+// Fase 1 aplicada: no banco real, `Usuario` corresponde à tabela de autenticação
+// gerenciada + `perfis` (id, nome_exibicao). As demais tabelas são
+// contas, categorias, regras_categorizacao e transacoes, com RLS por usuario_id.
+
+// ---------------------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  senhaHash  String
+  criadoEm   DateTime @default(now())
+
+  contas     Conta[]
+  categorias Categoria[]
+  regras     RegraCategorizacao[]
+  transacoes Transacao[]
+}
+
+model Conta {
+  id        String    @id @default(uuid())
+  usuarioId String
+  nome      String
+  tipo      TipoConta
+  criadoEm  DateTime  @default(now())
+
+  usuario    Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  transacoes Transacao[]
+
+  @@index([usuarioId])
+}
+
+model Categoria {
+  id        String  @id @default(uuid())
+  usuarioId String? // null = categoria default do sistema
+  nome      String
+  cor       String
+
+  usuario    Usuario?             @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  transacoes Transacao[]
+  regras     RegraCategorizacao[]
+
+  @@unique([usuarioId, nome])
+}
+
+model Transacao {
+  id          String        @id @default(uuid())
+  usuarioId   String
+  contaId     String
+  data        DateTime      @db.Date
+  descricao   String
+  valor       Decimal       @db.Decimal(14, 2)
+  tipo        TipoTransacao
+  categoriaId String?
+  origem      OrigemImport
+  hashDedupe  String
+  criadoEm    DateTime      @default(now())
+
+  usuario   Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  conta     Conta      @relation(fields: [contaId], references: [id], onDelete: Cascade)
+  categoria Categoria? @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+
+  @@unique([usuarioId, hashDedupe])
+  @@index([usuarioId, data])
+  @@index([usuarioId, categoriaId])
+}
+
+model RegraCategorizacao {
+  id           String   @id @default(uuid())
+  usuarioId    String? // null = regra default do sistema
+  palavraChave String
+  categoriaId  String
+  prioridade   Int      @default(100)
+  ativa        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+
+  usuario   Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  categoria Categoria @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId, ativa])
+}
+
+enum TipoConta {
+  CORRENTE
+  POUPANCA
+  CARTAO
+}
+
+enum TipoTransacao {
+  DEBITO
+  CREDITO
+}
+
+enum OrigemImport {
+  CSV
+  OFX
+  MANUAL
+}
