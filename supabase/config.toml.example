@@ -1,0 +1,3 @@
+# Copie para `supabase/config.toml` e preencha com o ref do seu projeto.
+# O arquivo real esta no .gitignore para nao expor o identificador do banco.
+project_id = "SEU_PROJECT_REF"
