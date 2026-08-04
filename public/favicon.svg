@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Hash Financeiro">
+  <title>Hash Financeiro</title>
+  <defs>
+    <linearGradient id="fundo" gradientUnits="userSpaceOnUse"
+                    x1="0" y1="0" x2="180" y2="512">
+      <stop offset="0" stop-color="#1b3a5e"/>
+      <stop offset="1" stop-color="#0c1e3c"/>
+    </linearGradient>
+    <!-- userSpaceOnUse: a haste vertical tem bounding box de largura zero e,
+         em objectBoundingBox, o gradiente degenera e o traco nao e pintado.
+         Em coordenadas absolutas os dois tracos tambem compartilham a mesma
+         rampa, sem emenda de cor entre eles. -->
+    <linearGradient id="cifrao" gradientUnits="userSpaceOnUse"
+                    x1="150" y1="110" x2="370" y2="430">
+      <stop offset="0" stop-color="#5cc8f8"/>
+      <stop offset="0.5" stop-color="#29a8f5"/>
+      <stop offset="1" stop-color="#1c86e6"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#fundo)"/>
+
+  <g fill="none" stroke="url(#cifrao)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Haste vertical. Vai alem das bordas externas do S (que tem 62 de
+         espessura, logo cobre ate y=105 no topo e y=435 na base) para que
+         as pontas apareçam de fato. -->
+    <path d="M256 72 V 440" stroke-width="46"/>
+    <!-- S do cifrao. -->
+    <path stroke-width="62"
+          d="M352 196
+             C 352 154, 310 136, 256 136
+             C 202 136, 162 156, 162 200
+             C 162 244, 206 258, 256 268
+             C 306 278, 350 294, 350 340
+             C 350 384, 310 404, 256 404
+             C 202 404, 160 384, 160 340"/>
+  </g>
+</svg>

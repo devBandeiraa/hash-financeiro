@@ -82,14 +82,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Hash Financeiro — gestor financeiro pessoal" },
       {
         name: "description",
-        content:
-          "Importe o extrato bancário, categorize automaticamente e acompanhe seus gastos.",
+        content: "Importe o extrato bancário, categorize automaticamente e acompanhe seus gastos.",
       },
       { property: "og:title", content: "Hash Financeiro — gestor financeiro pessoal" },
       {
         property: "og:description",
-        content:
-          "Importe o extrato bancário, categorize automaticamente e acompanhe seus gastos.",
+        content: "Importe o extrato bancário, categorize automaticamente e acompanhe seus gastos.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -106,7 +104,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      // SVG primeiro: navegadores modernos usam ele e escalam sem perda.
+      // O .ico (16/32/48/64/128/256) cobre o resto e a aba do Safari/legado.
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "apple-touch-icon", href: "/icone-180.png" },
     ],
   }),
   shellComponent: RootShell,
