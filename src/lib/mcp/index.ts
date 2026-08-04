@@ -6,11 +6,11 @@ import { criarTransacaoTool } from "./tools/criar-transacao";
 import { categorizarTransacaoTool } from "./tools/categorizar-transacao";
 import { gerenciarRegrasTool } from "./tools/gerenciar-regras";
 
-const ref = import.meta.env["VITE_SUPABASE_PROJECT_REF"];
+const ref = import.meta.env["VITE_SUPABASE_PROJECT_ID"];
 
 if (!ref) {
   throw new Error(
-    "VITE_SUPABASE_PROJECT_REF nao configurada. Defina a variavel no .env (veja .env.example).",
+    "VITE_SUPABASE_PROJECT_ID nao configurada. Defina a variavel no .env (veja .env.example).",
   );
 }
 

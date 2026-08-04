@@ -12,6 +12,7 @@ dist/
 dist-ssr/
 build/
 .output/
+.wrangler/
 .vinxi/
 .tanstack/
 .nitro/
