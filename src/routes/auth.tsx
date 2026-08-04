@@ -9,33 +9,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SilkBackground } from "@/components/silk-background";
 
-
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): { next?: string } =>
-    typeof s["next"] === "string" ? { next: s["next"] } : {},
-  head: () => ({
-    meta: [
-      { title: "Entrar no Hash Financeiro" },
-      {
-        name: "description",
-        content: "Acesse sua conta do Hash Financeiro para importar extratos e acompanhar seus gastos.",
-      },
-      { property: "og:title", content: "Entrar no Hash Financeiro" },
-      {
-        property: "og:description",
-        content: "Acesse sua conta do Hash Financeiro para importar extratos e acompanhar seus gastos.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+  validateSearch: (s: Record<string, unknown>): { next?: string; modo?: "entrar" | "criar" } => ({
+    ...(typeof s["next"] === "string" ? { next: s["next"] } : {}),
+    ...(s["modo"] === "criar" || s["modo"] === "entrar" ? { modo: s["modo"] } : {}),
   }),
+  head: ({ match }) => {
+    const criando = match.search.modo === "criar";
+    const titulo = criando ? "Criar conta no Hash Financeiro" : "Entrar no Hash Financeiro";
+    const descricao = criando
+      ? "Crie sua conta no Hash Financeiro e importe o extrato do banco para ver para onde vai o seu dinheiro."
+      : "Acesse sua conta do Hash Financeiro para importar extratos e acompanhar seus gastos.";
+    return {
+      meta: [
+        { title: titulo },
+        { name: "description", content: descricao },
+        { property: "og:title", content: titulo },
+        { property: "og:description", content: descricao },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+    };
+  },
   component: Auth,
 });
 
 function Auth() {
   const navigate = useNavigate();
-  const { next } = Route.useSearch();
-  const [modo, setModo] = useState<"entrar" | "criar">("entrar");
+  const { next, modo: modoInicial } = Route.useSearch();
+  const [modo, setModo] = useState<"entrar" | "criar">(modoInicial ?? "entrar");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [nome, setNome] = useState("");
@@ -93,7 +95,6 @@ function Auth() {
     <div className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-background px-6 py-12">
       <SilkBackground fixed />
       <div className="panel hairline-top stage relative w-full max-w-md p-7 shadow-xl">
-
         <p className="eyebrow">Hash Financeiro</p>
         <h1 className="font-display mt-1 text-2xl font-bold tracking-tight">
           {modo === "entrar" ? "Entrar" : "Criar conta"}
@@ -153,7 +154,16 @@ function Auth() {
           <button
             type="button"
             className="w-full text-[13px] text-ink-dim underline-offset-4 hover:underline"
-            onClick={() => setModo(modo === "entrar" ? "criar" : "entrar")}
+            onClick={() => {
+              const proximo = modo === "entrar" ? "criar" : "entrar";
+              setModo(proximo);
+              // Mantém a URL coerente com a tela: refresh e voltar preservam o modo.
+              navigate({
+                to: "/auth",
+                search: { ...(destino ? { next: destino } : {}), modo: proximo },
+                replace: true,
+              });
+            }}
           >
             {modo === "entrar" ? "Não tem conta? Criar agora" : "Já tenho conta"}
           </button>

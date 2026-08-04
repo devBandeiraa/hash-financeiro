@@ -132,7 +132,10 @@ function Index() {
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Button asChild size="lg" className="shadow-lg">
-                <Link to={logado ? "/dashboard" : "/auth"}>
+                <Link
+                  to={logado ? "/dashboard" : "/auth"}
+                  {...(logado ? {} : { search: { modo: "criar" as const } })}
+                >
                   {logado ? "Ir para o dashboard" : "Começar de graça"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -268,7 +271,10 @@ function Index() {
             Crie a conta, importe um extrato e veja o painel pronto em menos de um minuto.
           </p>
           <Button asChild size="lg" className="mt-8 shadow-lg">
-            <Link to={logado ? "/dashboard" : "/auth"}>
+            <Link
+              to={logado ? "/dashboard" : "/auth"}
+              {...(logado ? {} : { search: { modo: "criar" as const } })}
+            >
               {logado ? "Abrir dashboard" : "Criar conta grátis"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
