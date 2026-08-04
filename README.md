@@ -1,6 +1,6 @@
 # Hash Financeiro
 
-Gestor financeiro pessoal: você importa o extrato do banco (CSV ou OFX), o
+Gestor financeiro pessoal: você importa o extrato do banco (CSV ou PDF), o
 sistema categoriza cada lançamento automaticamente e um dashboard mostra para
 onde o dinheiro foi.
 
@@ -11,7 +11,7 @@ Projeto de portfólio focado em três eixos: **processamento de dados**,
 
 - **Importação resiliente** — detecção de separador (`;`, `,`, tab), mapeamento
   de colunas por sinônimo (`data|date|dt`, `descricao|historico|memo`,
-  `valor|amount`), datas em pt-BR/ISO/OFX, valores `1.234,56` e `-1234.56`,
+  `valor|amount`), datas em pt-BR/ISO, valores `1.234,56` e `-1234.56`,
   campos com aspas. Linhas ruins viram relatório, não exceção.
 - **Deduplicação** — hash SHA-256 de
   `usuario | conta | data | valor | tipo | descrição normalizada`, com
@@ -44,7 +44,7 @@ Cloud/Supabase)**, mantendo equivalência conceitual:
 ## Estrutura
 
 ```
-src/lib/import/       parsers puros: csv.parser, ofx.parser, normalize, dedupe
+src/lib/import/       parsers puros: csv.parser, pdf.parser, pdf.extract, normalize, dedupe
 src/lib/categorize/   engine.ts — motor de regras (função pura)
 src/lib/types/        contratos de domínio compartilhados
 src/lib/hash-financeiro.functions.ts   camada de serviço (server functions)
@@ -81,11 +81,11 @@ Aplicado desde a Fase 1, não no fim (detalhes em [SECURITY.md](./SECURITY.md)):
 ## Testes
 
 ```bash
-npm test   # vitest: normalização, parsing CSV/OFX, dedupe e categorização
+npm test   # vitest: normalização, parsing CSV/PDF, dedupe e categorização
 ```
 
 17 testes cobrem os casos difíceis: data impossível (`31/02`), milhar vs.
-decimal, aspas com separador dentro, OFX SGML, estabilidade do hash e
+decimal, aspas com separador dentro, extrato PDF, estabilidade do hash e
 precedência entre regra do usuário e regra do sistema.
 
 ## Roadmap concluído
@@ -98,4 +98,4 @@ precedência entre regra do usuário e regra do sistema.
 | 3    | Importação e parsing de CSV                          |
 | 4    | Motor de categorização + correção manual             |
 | 5    | Dashboard e frontend                                 |
-| 6    | OFX, LGPD, testes e documentação                     |
+| 6    | PDF, LGPD, testes e documentação                     |

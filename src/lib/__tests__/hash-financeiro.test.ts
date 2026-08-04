@@ -7,7 +7,7 @@ import {
   normalizarValor,
 } from "@/lib/import/normalize";
 import { detectarSeparador, mapearColunas, parseCsv, parseLinhaCsv } from "@/lib/import/csv.parser";
-import { parseOfx } from "@/lib/import/ofx.parser";
+import { parsePdfTexto } from "@/lib/import/pdf.parser";
 import { calcularHashDedupe } from "@/lib/import/dedupe";
 import { categorizar } from "@/lib/categorize/engine";
 import type { RegraCategorizacao } from "@/lib/types/dominio";
@@ -45,8 +45,16 @@ describe("normalizarDescricao", () => {
 
 describe("normalizarLinha", () => {
   it("usa a coluna de tipo quando existe", () => {
-    const r = normalizarLinha({ data: "01/07/2026", descricao: "IFOOD", valor: "50,00", tipo: "D" });
-    expect(r).toEqual({ ok: true, linha: { data: "2026-07-01", descricao: "IFOOD", valor: 50, tipo: "DEBITO" } });
+    const r = normalizarLinha({
+      data: "01/07/2026",
+      descricao: "IFOOD",
+      valor: "50,00",
+      tipo: "D",
+    });
+    expect(r).toEqual({
+      ok: true,
+      linha: { data: "2026-07-01", descricao: "IFOOD", valor: 50, tipo: "DEBITO" },
+    });
   });
   it("reporta motivo em linha inválida", () => {
     expect(normalizarLinha({ data: "x", descricao: "a", valor: "1" })).toEqual({
@@ -98,20 +106,55 @@ describe("csv", () => {
   });
 });
 
-describe("ofx", () => {
-  it("extrai transações de OFX SGML", () => {
-    const ofx = `
-<STMTTRN><TRNTYPE>DEBIT<DTPOSTED>20260703<TRNAMT>-120.45<MEMO>UBER TRIP</STMTTRN>
-<STMTTRN><TRNTYPE>CREDIT<DTPOSTED>20260705<TRNAMT>1500.00<MEMO>PIX RECEBIDO</STMTTRN>`;
-    const { linhas, invalidas } = parseOfx(ofx);
+describe("pdf", () => {
+  it("extrai lançamentos do texto de um extrato", () => {
+    const texto = `
+Banco Exemplo — Extrato de conta corrente
+Período: 01/07/2026 a 31/07/2026
+03/07/2026  UBER TRIP SAO PAULO        -120,45
+05/07/2026  PIX RECEBIDO JOAO         1.500,00
+Saldo em 31/07/2026                   2.379,55`;
+    const { linhas, invalidas } = parsePdfTexto(texto);
     expect(invalidas).toHaveLength(0);
+    expect(linhas).toHaveLength(2);
     expect(linhas[0]).toEqual({
       data: "2026-07-03",
-      descricao: "UBER TRIP",
+      descricao: "UBER TRIP SAO PAULO",
       valor: 120.45,
       tipo: "DEBITO",
     });
     expect(linhas[1]?.tipo).toBe("CREDITO");
+  });
+
+  it("descarta cabeçalho, rodapé e linha de saldo", () => {
+    const texto = `
+Extrato consolidado — página 1 de 2
+Agência 0001 Conta 12345-6
+10/07/2026  MERCADO LIVRE      -89,90
+Total do período                    -89,90
+Saldo disponível                  1.000,00`;
+    const { linhas } = parsePdfTexto(texto);
+    expect(linhas).toHaveLength(1);
+    expect(linhas[0]?.descricao).toBe("MERCADO LIVRE");
+  });
+
+  it("usa sufixo D/C do banco e infere o ano quando a data vem sem ele", () => {
+    const texto = `
+Extrato 2026
+12/08  TARIFA MENSALIDADE      35,00 D
+15/08  RENDIMENTO POUPANCA      4,21 C`;
+    const { linhas } = parsePdfTexto(texto);
+    expect(linhas[0]).toEqual({
+      data: "2026-08-12",
+      descricao: "TARIFA MENSALIDADE",
+      valor: 35,
+      tipo: "DEBITO",
+    });
+    expect(linhas[1]?.tipo).toBe("CREDITO");
+  });
+
+  it("avisa quando o PDF não tem lançamento reconhecível (ex.: digitalizado)", () => {
+    expect(() => parsePdfTexto("imagem sem texto util")).toThrow(/digitalizado|Nenhum lançamento/i);
   });
 });
 

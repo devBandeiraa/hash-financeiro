@@ -8,7 +8,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { parseCsv } from "@/lib/import/csv.parser";
-import { parseOfx } from "@/lib/import/ofx.parser";
+import { parsePdfTexto } from "@/lib/import/pdf.parser";
 import { calcularHashDedupe } from "@/lib/import/dedupe";
 import { categorizar } from "@/lib/categorize/engine";
 import type {
@@ -71,9 +71,9 @@ export const listarCategorias = createServerFn({ method: "GET" })
     }));
   });
 
-async function buscarRegras(
-  supabase: { from: (t: "regras_categorizacao") => any },
-): Promise<RegraCategorizacao[]> {
+async function buscarRegras(supabase: {
+  from: (t: "regras_categorizacao") => any;
+}): Promise<RegraCategorizacao[]> {
   const { data, error } = await supabase
     .from("regras_categorizacao")
     .select("id, usuario_id, palavra_chave, categoria_id, prioridade, ativa");
@@ -135,7 +135,7 @@ export const importarExtrato = createServerFn({ method: "POST" })
       .object({
         contaId: z.string().uuid(),
         conteudo: z.string().min(1).max(4_000_000),
-        formato: z.enum(["CSV", "OFX"]),
+        formato: z.enum(["CSV", "PDF"]),
       })
       .parse(input),
   )
@@ -150,10 +150,12 @@ export const importarExtrato = createServerFn({ method: "POST" })
     if (!conta) throw new Error("Conta não encontrada.");
 
     const { linhas, invalidas } =
-      data.formato === "OFX" ? parseOfx(data.conteudo) : parseCsv(data.conteudo);
+      data.formato === "PDF" ? parsePdfTexto(data.conteudo) : parseCsv(data.conteudo);
 
     if (linhas.length > LIMITE_LINHAS) {
-      throw new Error(`Arquivo grande demais: máximo de ${LIMITE_LINHAS} lançamentos por importação.`);
+      throw new Error(
+        `Arquivo grande demais: máximo de ${LIMITE_LINHAS} lançamentos por importação.`,
+      );
     }
 
     const regras = await buscarRegras(supabase as never);
@@ -210,7 +212,10 @@ export const listarTransacoes = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     z
       .object({
-        mes: z.string().regex(/^\d{4}-\d{2}$/).optional(),
+        mes: z
+          .string()
+          .regex(/^\d{4}-\d{2}$/)
+          .optional(),
         categoriaId: z.string().uuid().nullable().optional(),
         busca: z.string().trim().max(60).optional(),
       })
@@ -250,9 +255,7 @@ export const listarTransacoes = createServerFn({ method: "POST" })
 export const atualizarCategoriaTransacao = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z
-      .object({ id: z.string().uuid(), categoriaId: z.string().uuid().nullable() })
-      .parse(input),
+    z.object({ id: z.string().uuid(), categoriaId: z.string().uuid().nullable() }).parse(input),
   )
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
@@ -301,9 +304,7 @@ export interface ResumoDashboard {
 export const resumoDashboard = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z
-      .object({ mes: z.string().regex(/^\d{4}-\d{2}$/) })
-      .parse(input),
+    z.object({ mes: z.string().regex(/^\d{4}-\d{2}$/) }).parse(input),
   )
   .handler(async ({ data, context }): Promise<ResumoDashboard> => {
     const inicio = `${data.mes}-01`;
@@ -398,7 +399,7 @@ export const analisarExtrato = createServerFn({ method: "POST" })
       .object({
         contaId: z.string().uuid(),
         conteudo: z.string().min(1).max(4_000_000),
-        formato: z.enum(["CSV", "OFX"]),
+        formato: z.enum(["CSV", "PDF"]),
       })
       .parse(input),
   )
@@ -413,7 +414,7 @@ export const analisarExtrato = createServerFn({ method: "POST" })
     if (!conta) throw new Error("Conta não encontrada.");
 
     const { linhas, invalidas } =
-      data.formato === "OFX" ? parseOfx(data.conteudo) : parseCsv(data.conteudo);
+      data.formato === "PDF" ? parsePdfTexto(data.conteudo) : parseCsv(data.conteudo);
 
     if (linhas.length > LIMITE_LINHAS) {
       throw new Error(

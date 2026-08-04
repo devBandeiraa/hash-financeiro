@@ -183,7 +183,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      origem_import: "CSV" | "OFX" | "MANUAL"
+      origem_import: "CSV" | "PDF" | "MANUAL"
       tipo_conta: "CORRENTE" | "POUPANCA" | "CARTAO"
       tipo_transacao: "DEBITO" | "CREDITO"
     }
@@ -313,7 +313,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      origem_import: ["CSV", "OFX", "MANUAL"],
+      origem_import: ["CSV", "PDF", "MANUAL"],
       tipo_conta: ["CORRENTE", "POUPANCA", "CARTAO"],
       tipo_transacao: ["DEBITO", "CREDITO"],
     },

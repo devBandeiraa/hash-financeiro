@@ -5,7 +5,7 @@
 
 export type TipoConta = "CORRENTE" | "POUPANCA" | "CARTAO";
 export type TipoTransacao = "DEBITO" | "CREDITO";
-export type OrigemImport = "CSV" | "OFX" | "MANUAL";
+export type OrigemImport = "CSV" | "PDF" | "MANUAL";
 
 export interface Conta {
   id: string;

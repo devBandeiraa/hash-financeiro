@@ -24,13 +24,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Importe o extrato do banco em CSV ou OFX, veja a prévia antes de confirmar, categorize tudo automaticamente e descubra para onde vai o seu dinheiro.",
+          "Importe o extrato do banco em CSV ou PDF, veja a prévia antes de confirmar, categorize tudo automaticamente e descubra para onde vai o seu dinheiro.",
       },
       { property: "og:title", content: "Hash Financeiro — do extrato ao dashboard em segundos" },
       {
         property: "og:description",
         content:
-          "Importe o extrato em CSV ou OFX, categorize automaticamente e acompanhe seus gastos com privacidade por padrão.",
+          "Importe o extrato em CSV ou PDF, categorize automaticamente e acompanhe seus gastos com privacidade por padrão.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -44,7 +44,7 @@ const vantagens = [
     icone: FileSpreadsheet,
     titulo: "Importação que aguenta o extrato real",
     texto:
-      "CSV com separador, colunas, datas e valores em formato brasileiro detectados sozinhos. OFX de banco também. Linha estranha vira relatório, não erro na sua cara.",
+      "CSV com separador, colunas, datas e valores em formato brasileiro detectados sozinhos. PDF de extrato lido no seu navegador. Linha estranha vira relatório, não erro na sua cara.",
   },
   {
     icone: Sparkles,
@@ -82,7 +82,7 @@ const passos = [
   {
     icone: Upload,
     titulo: "1 · Importe",
-    texto: "Arraste o CSV ou OFX que o banco exporta. Nada de digitar lançamento a lançamento.",
+    texto: "Arraste o CSV ou PDF que o banco exporta. Nada de digitar lançamento a lançamento.",
   },
   {
     icone: Sparkles,
@@ -126,8 +126,8 @@ function Index() {
             </h1>
             <p className="mt-6 max-w-2xl text-[1.05rem] leading-relaxed text-on-shader-dim sm:text-lg">
               O Hash Financeiro lê o arquivo que o seu banco exporta, mostra uma prévia honesta do
-              que vai entrar, categoriza cada lançamento automaticamente e devolve um painel
-              claro do mês. Sem planilha, sem digitação, sem surpresa no fim do mês.
+              que vai entrar, categoriza cada lançamento automaticamente e devolve um painel claro
+              do mês. Sem planilha, sem digitação, sem surpresa no fim do mês.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -151,7 +151,7 @@ function Index() {
 
             <dl className="mt-14 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
               {[
-                ["CSV · OFX", "formatos aceitos"],
+                ["CSV · PDF", "formatos aceitos"],
                 ["0", "duplicatas gravadas"],
                 ["1 clique", "para apagar tudo"],
                 ["100%", "isolado por usuário"],
@@ -232,9 +232,9 @@ function Index() {
               Segurança e LGPD não são página de marketing aqui
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed text-ink-faint">
-              Todo o desenho do sistema parte do princípio de que extrato bancário é dado
-              sensível: acesso restrito no banco, nada de dado financeiro em log e o direito ao
-              esquecimento implementado de verdade.
+              Todo o desenho do sistema parte do princípio de que extrato bancário é dado sensível:
+              acesso restrito no banco, nada de dado financeiro em log e o direito ao esquecimento
+              implementado de verdade.
             </p>
             <Button asChild variant="outline" className="mt-6">
               <Link to="/privacidade">Ver garantias de privacidade</Link>

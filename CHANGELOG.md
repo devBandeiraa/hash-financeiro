@@ -24,7 +24,7 @@ e mensagens no padrão [Conventional Commits](https://www.conventionalcommits.or
 
 ### Fase 3 — Processamento de extratos
 - Parser de CSV com detecção de dialeto e mapeamento de colunas.
-- Suporte a OFX de bancos brasileiros.
+- Suporte a PDF de extrato: texto extraído no navegador e lançamentos reconhecidos por heurística.
 - Normalização de descrições e deduplicação por hash SHA-256.
 
 ### Fase 4 — Motor de categorização

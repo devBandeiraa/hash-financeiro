@@ -1,6 +1,6 @@
 /**
  * Normalização de uma linha de extrato para o formato canônico do domínio.
- * Reaproveitado por CSV (Fase 3) e OFX (Fase 6). Funções puras e testáveis.
+ * Reaproveitado por CSV (Fase 3) e PDF (Fase 6). Funções puras e testáveis.
  */
 import type { LinhaNormalizada, TipoTransacao } from "@/lib/types/dominio";
 
@@ -20,9 +20,9 @@ export function normalizarData(bruto: string): string | null {
     return validarData(`${ano}-${mes}-${dia}`);
   }
 
-  // OFX: 20260731 ou 20260731120000[-3:BRT]
-  const ofx = texto.match(/^(\d{4})(\d{2})(\d{2})/);
-  if (ofx) return validarData(`${ofx[1]!}-${ofx[2]!}-${ofx[3]!}`);
+  // Compacto: 20260731 ou 20260731120000
+  const compacta = texto.match(/^(\d{4})(\d{2})(\d{2})/);
+  if (compacta) return validarData(`${compacta[1]!}-${compacta[2]!}-${compacta[3]!}`);
 
   return null;
 }
@@ -34,9 +34,7 @@ function validarData(iso: string): string | null {
 }
 
 /** "1.234,56" | "-1234.56" | "R$ 1.234,56" -> { valor: 1234.56, tipo } */
-export function normalizarValor(
-  bruto: string,
-): { valor: number; tipo: TipoTransacao } | null {
+export function normalizarValor(bruto: string): { valor: number; tipo: TipoTransacao } | null {
   let texto = bruto.trim().replace(/\s|R\$/gi, "");
   if (!texto) return null;
 
@@ -90,9 +88,7 @@ export interface LinhaBruta {
   tipo?: string | undefined;
 }
 
-export type ResultadoLinha =
-  | { ok: true; linha: LinhaNormalizada }
-  | { ok: false; motivo: string };
+export type ResultadoLinha = { ok: true; linha: LinhaNormalizada } | { ok: false; motivo: string };
 
 export function normalizarLinha(bruta: LinhaBruta): ResultadoLinha {
   const data = normalizarData(bruta.data ?? "");

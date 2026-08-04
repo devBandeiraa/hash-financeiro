@@ -63,7 +63,7 @@ backup*.sql
 # Dados de usuario e extratos importados (LGPD)
 extratos/
 uploads/
-*.ofx
+*.pdf
 *.csv
 !src/**/fixtures/*.csv
 !src/**/__tests__/**/*.csv

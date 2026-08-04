@@ -114,6 +114,6 @@ enum TipoTransacao {
 
 enum OrigemImport {
   CSV
-  OFX
+  PDF
   MANUAL
 }

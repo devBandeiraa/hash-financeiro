@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { extrairTextoPdf } from "@/lib/import/pdf.extract";
 import {
   analisarExtrato,
   criarConta,
@@ -44,7 +45,7 @@ function Importar() {
   const [nomeConta, setNomeConta] = useState("");
   const [tipoConta, setTipoConta] = useState<TipoConta>("CORRENTE");
   const [previa, setPrevia] = useState<PreviaImportacao | null>(null);
-  const [pendente, setPendente] = useState<{ conteudo: string; formato: "CSV" | "OFX" } | null>(
+  const [pendente, setPendente] = useState<{ conteudo: string; formato: "CSV" | "PDF" } | null>(
     null,
   );
   const [resultado, setResultado] = useState<ResultadoImportacao | null>(null);
@@ -77,8 +78,9 @@ function Importar() {
     mutationFn: async (arquivo: File) => {
       if (arquivo.size > LIMITE_BYTES) throw new Error("Arquivo maior que 3 MB.");
       const nome = arquivo.name.toLowerCase();
-      const formato = nome.endsWith(".ofx") ? "OFX" : "CSV";
-      const conteudo = await arquivo.text();
+      const formato = nome.endsWith(".pdf") ? "PDF" : "CSV";
+      // O PDF é lido no navegador: só o texto reconhecido chega ao servidor.
+      const conteudo = formato === "PDF" ? await extrairTextoPdf(arquivo) : await arquivo.text();
       const p = await analisar({ data: { contaId, conteudo, formato } });
       return { previa: p, conteudo, formato } as const;
     },
@@ -115,7 +117,7 @@ function Importar() {
         <p className="eyebrow">Entrada de dados</p>
         <h1 className="font-display text-3xl font-bold tracking-tight">Importar extrato</h1>
         <p className="mt-1 text-[13px] text-ink-faint">
-          CSV ou OFX. O arquivo é processado em memória: nada é armazenado além das transações.
+          CSV ou PDF. O PDF é lido no seu navegador; nada é armazenado além das transações.
         </p>
       </div>
 
@@ -176,14 +178,14 @@ function Importar() {
         <Panel
           eyebrow="Passo 2"
           title="Envie o arquivo"
-          subtitle="Colunas aceitas: data, descrição/histórico e valor (CSV com , ou ;). Nada é gravado antes de você confirmar."
+          subtitle="CSV com colunas data, descrição/histórico e valor (, ou ;). PDF de extrato com camada de texto — digitalizado/imagem não é lido. Nada é gravado antes de você confirmar."
           delay={100}
         >
           <div className="space-y-4">
             <Input
               ref={inputArquivo}
               type="file"
-              accept=".csv,.txt,.ofx"
+              accept=".csv,.txt,.pdf"
               disabled={!contaId || preparar.isPending || enviar.isPending}
               aria-label="Arquivo de extrato"
               onChange={(e) => {
@@ -242,7 +244,11 @@ function Importar() {
                     valor: previa.duplicadasNoArquivo,
                     cor: "text-ink-dim",
                   },
-                  { rotulo: "Já existem na conta", valor: previa.jaExistentes, cor: "text-ink-dim" },
+                  {
+                    rotulo: "Já existem na conta",
+                    valor: previa.jaExistentes,
+                    cor: "text-ink-dim",
+                  },
                   { rotulo: "Linhas inválidas", valor: previa.invalidas.length, cor: "text-ember" },
                 ].map((k) => (
                   <div
@@ -259,8 +265,9 @@ function Importar() {
                 <div className="rounded-lg border border-hairline p-4 text-sm">
                   <p className="eyebrow">Impacto estimado</p>
                   <p className="mt-2 text-ink-dim">
-                    Entradas <span className="num text-mint">{moeda.format(previa.totais.entradas)}</span>{" "}
-                    · Saídas{" "}
+                    Entradas{" "}
+                    <span className="num text-mint">{moeda.format(previa.totais.entradas)}</span> ·
+                    Saídas{" "}
                     <span className="num text-ember">{moeda.format(previa.totais.saidas)}</span>
                   </p>
                   <p className="mt-1 text-xs text-ink-faint">
