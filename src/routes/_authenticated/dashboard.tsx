@@ -20,7 +20,7 @@ import { AppShell } from "@/components/app-shell";
 import { Panel } from "@/components/cfo/Panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { resumoDashboard, reclassificarTudo } from "@/lib/finpessoal.functions";
+import { resumoDashboard, reclassificarTudo } from "@/lib/hash-financeiro.functions";
 import { formatarBRL } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({

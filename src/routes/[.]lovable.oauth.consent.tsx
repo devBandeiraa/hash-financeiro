@@ -45,7 +45,7 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
   errorComponent: ({ error }) => (
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="panel hairline-top w-full max-w-md p-7">
-        <p className="eyebrow">FinPessoal</p>
+        <p className="eyebrow">Hash Financeiro</p>
         <h1 className="font-display mt-1 text-xl font-bold tracking-tight">
           Não foi possível carregar esta autorização
         </h1>
@@ -94,7 +94,7 @@ function Consentimento() {
           Conectar {nomeCliente} à sua conta
         </h1>
         <p className="mt-2 text-[13px] text-ink-faint">
-          {nomeCliente} poderá ler e alterar seus dados do FinPessoal — contas, transações,
+          {nomeCliente} poderá ler e alterar seus dados do Hash Financeiro — contas, transações,
           categorias e regras — agindo como você. Nenhum outro usuário é acessível.
         </p>
 

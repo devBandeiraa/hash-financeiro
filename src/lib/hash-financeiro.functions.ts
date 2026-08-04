@@ -1,5 +1,5 @@
 /**
- * Server functions do FinPessoal. Toda leitura/escrita passa por
+ * Server functions do Hash Financeiro. Toda leitura/escrita passa por
  * `requireSupabaseAuth`: o cliente age como o usuário logado e o RLS do banco
  * garante o isolamento. Nenhum dado financeiro é logado.
  */

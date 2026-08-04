@@ -21,7 +21,7 @@ import {
   criarConta,
   importarExtrato,
   listarContas,
-} from "@/lib/finpessoal.functions";
+} from "@/lib/hash-financeiro.functions";
 import type { PreviaImportacao, ResultadoImportacao, TipoConta } from "@/lib/types/dominio";
 
 export const Route = createFileRoute("/_authenticated/importar")({

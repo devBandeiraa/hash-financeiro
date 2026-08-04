@@ -18,7 +18,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { excluirMinhaConta } from "@/lib/finpessoal.functions";
+import { excluirMinhaConta } from "@/lib/hash-financeiro.functions";
 
 export const Route = createFileRoute("/_authenticated/privacidade")({
   component: Privacidade,
@@ -56,7 +56,7 @@ function Privacidade() {
         <p className="eyebrow">LGPD</p>
         <h1 className="font-display text-3xl font-bold tracking-tight">Privacidade e dados</h1>
         <p className="mt-1 text-[13px] text-ink-faint">
-          Dado financeiro é dado sensível. Estas são as garantias do FinPessoal.
+          Dado financeiro é dado sensível. Estas são as garantias do Hash Financeiro.
         </p>
       </div>
 

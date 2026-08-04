@@ -20,13 +20,13 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FinPessoal — do extrato ao dashboard em segundos" },
+      { title: "Hash Financeiro — do extrato ao dashboard em segundos" },
       {
         name: "description",
         content:
           "Importe o extrato do banco em CSV ou OFX, veja a prévia antes de confirmar, categorize tudo automaticamente e descubra para onde vai o seu dinheiro.",
       },
-      { property: "og:title", content: "FinPessoal — do extrato ao dashboard em segundos" },
+      { property: "og:title", content: "Hash Financeiro — do extrato ao dashboard em segundos" },
       {
         property: "og:description",
         content:
@@ -125,7 +125,7 @@ function Index() {
               <br className="hidden sm:block" /> um raio-x dos seus gastos.
             </h1>
             <p className="mt-6 max-w-2xl text-[1.05rem] leading-relaxed text-on-shader-dim sm:text-lg">
-              O FinPessoal lê o arquivo que o seu banco exporta, mostra uma prévia honesta do
+              O Hash Financeiro lê o arquivo que o seu banco exporta, mostra uma prévia honesta do
               que vai entrar, categoriza cada lançamento automaticamente e devolve um painel
               claro do mês. Sem planilha, sem digitação, sem surpresa no fim do mês.
             </p>
@@ -277,7 +277,7 @@ function Index() {
       </section>
 
       <footer className="mx-auto max-w-6xl px-6 py-10 text-[12px] text-ink-faint">
-        FinPessoal — projeto de portfólio com foco em processamento de dados, domínio fintech e
+        Hash Financeiro — projeto de portfólio com foco em processamento de dados, domínio fintech e
         segurança de dados sensíveis.
       </footer>
     </main>

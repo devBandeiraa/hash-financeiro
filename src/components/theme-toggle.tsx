@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 type Tema = "dark" | "light";
 
-const CHAVE = "finpessoal-tema";
+const CHAVE = "hash-financeiro-tema";
 
 function aplicar(tema: Tema) {
   const raiz = document.documentElement;

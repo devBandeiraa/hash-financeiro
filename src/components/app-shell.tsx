@@ -40,7 +40,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link to="/dashboard" className="min-w-0">
               <span className="eyebrow block">Gestor financeiro</span>
               <span className="font-display text-[1.05rem] font-bold tracking-tight text-foreground">
-                FinPessoal
+                Hash Financeiro
               </span>
             </Link>
             <nav className="flex flex-1 flex-wrap gap-1">

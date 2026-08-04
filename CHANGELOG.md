@@ -1,6 +1,6 @@
 # Changelog
 
-Todas as mudanças relevantes do FinPessoal, agrupadas por fase de desenvolvimento.
+Todas as mudanças relevantes do Hash Financeiro, agrupadas por fase de desenvolvimento.
 Formato inspirado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e mensagens no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/).
 

@@ -23,7 +23,7 @@ import {
   listarCategorias,
   listarRegras,
   reclassificarTudo,
-} from "@/lib/finpessoal.functions";
+} from "@/lib/hash-financeiro.functions";
 
 export const Route = createFileRoute("/_authenticated/regras")({
   component: Regras,

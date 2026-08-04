@@ -25,7 +25,7 @@ import {
   atualizarCategoriaTransacao,
   listarCategorias,
   listarTransacoes,
-} from "@/lib/finpessoal.functions";
+} from "@/lib/hash-financeiro.functions";
 import { formatarBRL, formatarData } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/transacoes")({

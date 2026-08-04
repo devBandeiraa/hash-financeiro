@@ -79,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "FinPessoal — gestor financeiro pessoal" },
+      { title: "Hash Financeiro — gestor financeiro pessoal" },
       {
         name: "description",
         content:
           "Importe o extrato bancário, categorize automaticamente e acompanhe seus gastos.",
       },
-      { property: "og:title", content: "FinPessoal — gestor financeiro pessoal" },
+      { property: "og:title", content: "Hash Financeiro — gestor financeiro pessoal" },
       {
         property: "og:description",
         content:
@@ -122,7 +122,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('finpessoal-tema');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.style.colorScheme='light';}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('hash-financeiro-tema');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.style.colorScheme='light';}}catch(e){}})();`,
           }}
         />
       </head>

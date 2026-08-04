@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// FinPessoal — modelagem de referência (Fase 0)
+// Hash Financeiro — modelagem de referência (Fase 0)
 //
 // Este arquivo documenta o modelo de dados do domínio. Neste ambiente o banco
 // é PostgreSQL gerenciado e as migrations são SQL versionadas em

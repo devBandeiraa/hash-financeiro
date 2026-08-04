@@ -15,15 +15,15 @@ export const Route = createFileRoute("/auth")({
     typeof s["next"] === "string" ? { next: s["next"] } : {},
   head: () => ({
     meta: [
-      { title: "Entrar no FinPessoal" },
+      { title: "Entrar no Hash Financeiro" },
       {
         name: "description",
-        content: "Acesse sua conta do FinPessoal para importar extratos e acompanhar seus gastos.",
+        content: "Acesse sua conta do Hash Financeiro para importar extratos e acompanhar seus gastos.",
       },
-      { property: "og:title", content: "Entrar no FinPessoal" },
+      { property: "og:title", content: "Entrar no Hash Financeiro" },
       {
         property: "og:description",
-        content: "Acesse sua conta do FinPessoal para importar extratos e acompanhar seus gastos.",
+        content: "Acesse sua conta do Hash Financeiro para importar extratos e acompanhar seus gastos.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -94,7 +94,7 @@ function Auth() {
       <SilkBackground fixed />
       <div className="panel hairline-top stage relative w-full max-w-md p-7 shadow-xl">
 
-        <p className="eyebrow">FinPessoal</p>
+        <p className="eyebrow">Hash Financeiro</p>
         <h1 className="font-display mt-1 text-2xl font-bold tracking-tight">
           {modo === "entrar" ? "Entrar" : "Criar conta"}
         </h1>

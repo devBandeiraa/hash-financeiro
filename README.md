@@ -1,4 +1,4 @@
-# FinPessoal
+# Hash Financeiro
 
 Gestor financeiro pessoal: você importa o extrato do banco (CSV ou OFX), o
 sistema categoriza cada lançamento automaticamente e um dashboard mostra para
@@ -36,7 +36,7 @@ Cloud/Supabase)**, mantendo equivalência conceitual:
 
 | Plano original      | Implementação                                            |
 | ------------------- | -------------------------------------------------------- |
-| Express controllers | `createServerFn` em `src/lib/finpessoal.functions.ts`     |
+| Express controllers | `createServerFn` em `src/lib/hash-financeiro.functions.ts`     |
 | Prisma schema       | `prisma/schema.prisma` (documentação) + migrations SQL    |
 | Middleware de auth  | `requireSupabaseAuth` + RLS por `usuario_id` no banco     |
 | Next.js App Router  | Rotas de arquivo em `src/routes`                          |
@@ -47,7 +47,7 @@ Cloud/Supabase)**, mantendo equivalência conceitual:
 src/lib/import/       parsers puros: csv.parser, ofx.parser, normalize, dedupe
 src/lib/categorize/   engine.ts — motor de regras (função pura)
 src/lib/types/        contratos de domínio compartilhados
-src/lib/finpessoal.functions.ts   camada de serviço (server functions)
+src/lib/hash-financeiro.functions.ts   camada de serviço (server functions)
 src/routes/           / (landing), /auth, /_authenticated/*
 src/lib/__tests__/    testes unitários dos serviços puros
 ```
