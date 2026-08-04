@@ -59,9 +59,7 @@ function Dashboard() {
         <div>
           <p className="eyebrow">Visão do mês</p>
           <h1 className="font-display text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="mt-1 text-[13px] text-ink-faint">
-            Para onde foi o seu dinheiro no mês.
-          </p>
+          <p className="mt-1 text-[13px] text-ink-faint">Para onde foi o seu dinheiro no mês.</p>
         </div>
         <div className="flex items-end gap-2">
           <Input
@@ -71,11 +69,7 @@ function Dashboard() {
             className="w-44"
             aria-label="Mês de referência"
           />
-          <Button
-            variant="outline"
-            onClick={() => mutacao.mutate()}
-            disabled={mutacao.isPending}
-          >
+          <Button variant="outline" onClick={() => mutacao.mutate()} disabled={mutacao.isPending}>
             Reclassificar
           </Button>
         </div>
@@ -104,10 +98,21 @@ function Dashboard() {
             </div>
           ) : (
             <div className="grid gap-6 lg:grid-cols-2">
-              <Panel eyebrow="Distribuição" title="Gastos por categoria" delay={60} bodyClassName="h-72 p-5 pt-0 sm:p-6 sm:pt-0">
+              <Panel
+                eyebrow="Distribuição"
+                title="Gastos por categoria"
+                delay={60}
+                bodyClassName="h-72 p-5 pt-0 sm:p-6 sm:pt-0"
+              >
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={pizza} dataKey="total" nameKey="nome" innerRadius={55} outerRadius={95}>
+                    <Pie
+                      data={pizza}
+                      dataKey="total"
+                      nameKey="nome"
+                      innerRadius={55}
+                      outerRadius={95}
+                    >
                       {pizza.map((fatia) => (
                         <Cell key={fatia.nome} fill={fatia.cor} />
                       ))}
@@ -117,11 +122,25 @@ function Dashboard() {
                 </ResponsiveContainer>
               </Panel>
 
-              <Panel eyebrow="Série diária" title="Saídas por dia" delay={120} bodyClassName="h-72 p-5 pt-0 sm:p-6 sm:pt-0">
+              <Panel
+                eyebrow="Série diária"
+                title="Saídas por dia"
+                delay={120}
+                bodyClassName="h-72 p-5 pt-0 sm:p-6 sm:pt-0"
+              >
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={data.serieDiaria}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--grid-line)" />
-                    <XAxis dataKey="data" tickFormatter={(d: string) => d.slice(8)} fontSize={12} stroke="var(--axis-line)" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="var(--grid-line)"
+                    />
+                    <XAxis
+                      dataKey="data"
+                      tickFormatter={(d: string) => d.slice(8)}
+                      fontSize={12}
+                      stroke="var(--axis-line)"
+                    />
                     <YAxis fontSize={12} width={60} stroke="var(--axis-line)" />
                     <Tooltip formatter={(v: number) => formatarBRL(v)} />
                     <Bar dataKey="saidas" fill="var(--ember)" radius={4} />
@@ -183,7 +202,13 @@ function Indicador({
   tom?: "signal" | "ember" | "mint";
 }) {
   const cor =
-    tom === "ember" ? "text-ember" : tom === "mint" ? "text-mint" : tom === "signal" ? "text-signal" : "text-foreground";
+    tom === "ember"
+      ? "text-ember"
+      : tom === "mint"
+        ? "text-mint"
+        : tom === "signal"
+          ? "text-signal"
+          : "text-foreground";
   return (
     <div className="panel hairline-top stage px-5 py-5">
       <p className="eyebrow">{titulo}</p>

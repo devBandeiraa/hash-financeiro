@@ -121,9 +121,7 @@ function Transacoes() {
                   <TableCell>
                     <span
                       className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
-                        t.tipo === "DEBITO"
-                          ? "bg-ember/10 text-ember"
-                          : "bg-mint/10 text-mint"
+                        t.tipo === "DEBITO" ? "bg-ember/10 text-ember" : "bg-mint/10 text-mint"
                       }`}
                     >
                       {t.tipo === "DEBITO" ? "saída" : "entrada"}

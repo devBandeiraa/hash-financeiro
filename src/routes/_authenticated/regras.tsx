@@ -72,9 +72,7 @@ function Regras() {
     <AppShell>
       <div className="mb-6">
         <p className="eyebrow">Motor determinístico</p>
-        <h1 className="font-display text-3xl font-bold tracking-tight">
-          Regras de categorização
-        </h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight">Regras de categorização</h1>
         <p className="mt-1 max-w-2xl text-[13px] text-ink-faint">
           A primeira palavra-chave que casa com a descrição define a categoria. Suas regras vencem
           as do sistema.
@@ -82,7 +80,12 @@ function Regras() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
-        <Panel eyebrow="Nova regra" title="Palavra-chave → categoria" subtitle='Ex.: "IFOOD" → Alimentação' delay={40}>
+        <Panel
+          eyebrow="Nova regra"
+          title="Palavra-chave → categoria"
+          subtitle='Ex.: "IFOOD" → Alimentação'
+          delay={40}
+        >
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="palavra" className="eyebrow">

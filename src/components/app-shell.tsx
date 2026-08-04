@@ -8,7 +8,6 @@ import { SilkBackground } from "@/components/silk-background";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
-
 const links = [
   { to: "/dashboard", rotulo: "Dashboard" },
   { to: "/importar", rotulo: "Importar" },
@@ -69,4 +68,3 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
