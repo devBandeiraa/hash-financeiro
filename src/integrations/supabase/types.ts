@@ -38,6 +38,33 @@ export type Database = {
         }
         Relationships: []
       }
+      insights_mensais: {
+        Row: {
+          gerado_em: string
+          id: string
+          impressao: string
+          mes: string
+          texto: string
+          usuario_id: string
+        }
+        Insert: {
+          gerado_em?: string
+          id?: string
+          impressao: string
+          mes: string
+          texto: string
+          usuario_id: string
+        }
+        Update: {
+          gerado_em?: string
+          id?: string
+          impressao?: string
+          mes?: string
+          texto?: string
+          usuario_id?: string
+        }
+        Relationships: []
+      }
       contas: {
         Row: {
           criado_em: string
@@ -86,6 +113,7 @@ export type Database = {
           categoria_id: string
           criado_em: string
           id: string
+          origem: Database["public"]["Enums"]["categoria_origem"]
           palavra_chave: string
           prioridade: number
           usuario_id: string | null
@@ -95,6 +123,7 @@ export type Database = {
           categoria_id: string
           criado_em?: string
           id?: string
+          origem?: Database["public"]["Enums"]["categoria_origem"]
           palavra_chave: string
           prioridade?: number
           usuario_id?: string | null
@@ -104,6 +133,7 @@ export type Database = {
           categoria_id?: string
           criado_em?: string
           id?: string
+          origem?: Database["public"]["Enums"]["categoria_origem"]
           palavra_chave?: string
           prioridade?: number
           usuario_id?: string | null
@@ -121,6 +151,7 @@ export type Database = {
       transacoes: {
         Row: {
           categoria_id: string | null
+          categoria_origem: Database["public"]["Enums"]["categoria_origem"]
           conta_id: string
           criado_em: string
           data: string
@@ -134,6 +165,7 @@ export type Database = {
         }
         Insert: {
           categoria_id?: string | null
+          categoria_origem?: Database["public"]["Enums"]["categoria_origem"]
           conta_id: string
           criado_em?: string
           data: string
@@ -147,6 +179,7 @@ export type Database = {
         }
         Update: {
           categoria_id?: string | null
+          categoria_origem?: Database["public"]["Enums"]["categoria_origem"]
           conta_id?: string
           criado_em?: string
           data?: string
@@ -183,6 +216,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      categoria_origem: "sistema" | "usuario" | "ia"
       origem_import: "CSV" | "PDF" | "MANUAL"
       tipo_conta: "CORRENTE" | "POUPANCA" | "CARTAO"
       tipo_transacao: "DEBITO" | "CREDITO"
