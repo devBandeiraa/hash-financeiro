@@ -189,6 +189,7 @@ describe("categorizar", () => {
     categoriaId: "cat-alimentacao",
     prioridade: 100,
     ativa: true,
+    origem: "sistema",
     ...over,
   });
 
