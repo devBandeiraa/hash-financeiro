@@ -5,6 +5,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/app-shell";
+import { BadgeOrigem } from "@/components/ia/badge-ia";
+import { SugestoesIa } from "@/components/ia/sugestoes-ia";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -89,6 +91,10 @@ function Transacoes() {
         </div>
       </div>
 
+      <div className="mb-6">
+        <SugestoesIa delay={40} />
+      </div>
+
       <div className="panel hairline-top stage overflow-hidden">
         <Table>
           <TableHeader>
@@ -134,27 +140,30 @@ function Transacoes() {
                     {formatarBRL(t.valor)}
                   </TableCell>
                   <TableCell>
-                    <Select
-                      value={t.categoriaId ?? SEM_CATEGORIA}
-                      onValueChange={(v) =>
-                        mudarCategoria.mutate({
-                          id: t.id,
-                          categoriaId: v === SEM_CATEGORIA ? null : v,
-                        })
-                      }
-                    >
-                      <SelectTrigger className="h-8" aria-label="Categoria">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={SEM_CATEGORIA}>Não categorizado</SelectItem>
-                        {(categorias.data ?? []).map((c) => (
-                          <SelectItem key={c.id} value={c.id}>
-                            {c.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex items-center gap-1.5">
+                      <Select
+                        value={t.categoriaId ?? SEM_CATEGORIA}
+                        onValueChange={(v) =>
+                          mudarCategoria.mutate({
+                            id: t.id,
+                            categoriaId: v === SEM_CATEGORIA ? null : v,
+                          })
+                        }
+                      >
+                        <SelectTrigger className="h-8" aria-label="Categoria">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={SEM_CATEGORIA}>Não categorizado</SelectItem>
+                          {(categorias.data ?? []).map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {t.categoriaId ? <BadgeOrigem origem={t.categoriaOrigem} /> : null}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { AppShell } from "@/components/app-shell";
 import { Panel } from "@/components/cfo/Panel";
+import { SugestoesIa } from "@/components/ia/sugestoes-ia";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -346,6 +347,9 @@ function Importar() {
             </div>
           </Panel>
         ) : null}
+
+        {/* Passo 4: só faz sentido depois que algo entrou no banco. */}
+        {resultado && resultado.importadas > 0 ? <SugestoesIa delay={220} /> : null}
       </div>
     </AppShell>
   );

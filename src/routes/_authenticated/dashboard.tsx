@@ -18,6 +18,7 @@ import {
 
 import { AppShell } from "@/components/app-shell";
 import { Panel } from "@/components/cfo/Panel";
+import { PainelInsight } from "@/components/ia/insight-mensal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { resumoDashboard, reclassificarTudo } from "@/lib/hash-financeiro.functions";
@@ -147,6 +148,8 @@ function Dashboard() {
                   </BarChart>
                 </ResponsiveContainer>
               </Panel>
+
+              <PainelInsight mes={mes} delay={150} />
 
               <Panel
                 eyebrow="Ranking"
