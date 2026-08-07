@@ -8,10 +8,18 @@
  * README: é decisão consciente de custo, não descuido.
  */
 import { ApiError, GoogleGenAI, ThinkingLevel } from "@google/genai";
+import type { Content, FunctionDeclaration } from "@google/genai";
 import * as z from "zod/v4";
 
 import { ErroProvedor, IaIndisponivelError } from "../modelo.server";
-import type { ClienteModelo } from "../modelo.server";
+import type {
+  ChamadaFerramenta,
+  ClienteModelo,
+  DeclaracaoFerramenta,
+  EventoModelo,
+  PedidoConversa,
+  TurnoConversa,
+} from "../modelo.server";
 
 /**
  * `flash-lite` é o tier certo para classificar descrição: tarefa curta, e a
@@ -82,5 +90,107 @@ export function criarClienteGemini(): ClienteModelo {
         throw normalizarErro(erro);
       }
     },
+
+    conversar(pedido, signal) {
+      return conversarGemini(ai, modelo, pedido, signal);
+    },
   };
+}
+
+/** Histórico neutro -> `contents` do Gemini. */
+function comoConteudos(historico: TurnoConversa[]): Content[] {
+  return historico.map((turno): Content => {
+    if (turno.papel === "usuario") {
+      return { role: "user", parts: [{ text: turno.texto }] };
+    }
+    if (turno.papel === "modelo") {
+      return {
+        role: "model",
+        parts: [
+          ...(turno.texto ? [{ text: turno.texto }] : []),
+          ...turno.chamadas.map((c) => ({
+            functionCall: { name: c.nome, args: c.args },
+            // Sem a assinatura de volta, o Gemini 3.x responde 400.
+            ...(c.assinatura ? { thoughtSignature: c.assinatura } : {}),
+          })),
+        ],
+      };
+    }
+    // O Gemini espera as respostas de ferramenta no papel `user`.
+    return {
+      role: "user",
+      parts: turno.respostas.map((r) => ({
+        functionResponse: { name: r.nome, response: { resultado: r.conteudo } },
+      })),
+    };
+  });
+}
+
+function comoDeclaracoes(ferramentas: DeclaracaoFerramenta[]): FunctionDeclaration[] {
+  return ferramentas.map((f) => {
+    const json = z.toJSONSchema(f.esquema) as Record<string, unknown>;
+    delete json["$schema"];
+    return {
+      name: f.nome,
+      description: f.descricao,
+      parametersJsonSchema: json,
+    };
+  });
+}
+
+/**
+ * Conversa em streaming. Texto é emitido conforme chega; as chamadas de
+ * ferramenta só saem no fim do turno, porque o modelo pode pedir várias e
+ * executar pela metade daria resultado inconsistente.
+ */
+async function* conversarGemini(
+  ai: GoogleGenAI,
+  modelo: string,
+  pedido: PedidoConversa,
+  signal: AbortSignal,
+): AsyncIterable<EventoModelo> {
+  let fluxo;
+  try {
+    fluxo = await ai.models.generateContentStream({
+      model: modelo,
+      contents: comoConteudos(pedido.historico),
+      config: {
+        systemInstruction: pedido.system,
+        abortSignal: signal,
+        ...(pedido.maxTokens ? { maxOutputTokens: pedido.maxTokens } : {}),
+        ...(pedido.ferramentas.length
+          ? { tools: [{ functionDeclarations: comoDeclaracoes(pedido.ferramentas) }] }
+          : {}),
+      },
+    });
+  } catch (erro) {
+    throw normalizarErro(erro);
+  }
+
+  const chamadas: ChamadaFerramenta[] = [];
+  try {
+    for await (const bloco of fluxo) {
+      // Percorremos as partes cruas, e não `bloco.text`/`bloco.functionCalls`,
+      // porque esses atalhos descartam a `thoughtSignature` de cada parte.
+      for (const parte of bloco.candidates?.[0]?.content?.parts ?? []) {
+        // `thought` é o raciocínio interno do modelo: não vai para o usuário.
+        if (parte.thought) continue;
+
+        if (parte.text) yield { tipo: "texto", conteudo: parte.text };
+
+        const chamada = parte.functionCall;
+        if (!chamada?.name) continue;
+        chamadas.push({
+          id: chamada.id ?? `${chamada.name}-${chamadas.length}`,
+          nome: chamada.name,
+          args: (chamada.args ?? {}) as Record<string, unknown>,
+          ...(parte.thoughtSignature ? { assinatura: parte.thoughtSignature } : {}),
+        });
+      }
+    }
+  } catch (erro) {
+    throw normalizarErro(erro);
+  }
+
+  if (chamadas.length) yield { tipo: "chamadas", chamadas };
 }

@@ -52,9 +52,14 @@ export interface PedidoModelo {
   esquema?: z.ZodType;
 }
 
-/** Contrato mínimo do modelo. Um método — por isso trocar provedor é barato. */
+/** Contrato do modelo. Enxuto de proposito: trocar provedor e barato. */
 export interface ClienteModelo {
   gerar(pedido: PedidoModelo, signal: AbortSignal): Promise<string>;
+  /**
+   * Conversa com histórico e ferramentas, emitindo em streaming.
+   * Opcional: um provedor sem isso continua servindo a Parte A inteira.
+   */
+  conversar?(pedido: PedidoConversa, signal: AbortSignal): AsyncIterable<EventoModelo>;
 }
 
 export interface OpcoesChamada {
@@ -230,3 +235,45 @@ function recortarPrimeiroJson(texto: string): string | null {
   }
   return null;
 }
+
+// --------------------------------------------------------------- conversa ---
+
+/** Pedido do modelo para executar uma ferramenta. */
+export interface ChamadaFerramenta {
+  id: string;
+  nome: string;
+  args: Record<string, unknown>;
+  /**
+   * Dado opaco do provedor que precisa voltar intacto no histórico. O Gemini
+   * 3.x recusa (400) um `functionCall` reenviado sem a `thoughtSignature` que
+   * ele emitiu junto. O loop não interpreta isto — só carrega.
+   *
+   * `| undefined` explícito por causa de `exactOptionalPropertyTypes`: o
+   * histórico chega do cliente validado por zod, que produz essa forma.
+   */
+  assinatura?: string | undefined;
+}
+
+/** Um turno do histórico. É o que o provedor traduz para o formato dele. */
+export type TurnoConversa =
+  | { papel: "usuario"; texto: string }
+  | { papel: "modelo"; texto: string; chamadas: ChamadaFerramenta[] }
+  | { papel: "ferramenta"; respostas: Array<{ id: string; nome: string; conteudo: string }> };
+
+/** Ferramenta oferecida ao modelo, ainda sem forma de provedor. */
+export interface DeclaracaoFerramenta {
+  nome: string;
+  descricao: string;
+  esquema: z.ZodObject<z.ZodRawShape>;
+}
+
+export interface PedidoConversa {
+  system: string;
+  historico: TurnoConversa[];
+  ferramentas: DeclaracaoFerramenta[];
+  maxTokens?: number;
+}
+
+/** O que o provedor emite enquanto gera. Texto chega em pedaços. */
+export type EventoModelo =
+  { tipo: "texto"; conteudo: string } | { tipo: "chamadas"; chamadas: ChamadaFerramenta[] };
