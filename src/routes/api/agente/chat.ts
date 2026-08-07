@@ -70,6 +70,18 @@ export const Route = createFileRoute("/api/agente/chat")({
         const { FERRAMENTAS_AGENTE, ehLeitura } = await import("@/lib/agente/ferramentas");
         const { executarCapacidade, capacidadePorNome } = await import("@/lib/capacidades");
 
+        // Nomes de categoria e conta para a frase de confirmação: sem eles a
+        // proposta mostraria UUID, que ninguém consegue avaliar antes de clicar.
+        const [categorias, contas] = await Promise.all([
+          contexto.supabase.from("categorias").select("id, nome"),
+          contexto.supabase.from("contas").select("id, nome"),
+        ]);
+        const nomes = new Map<string, string>(
+          [...(categorias.data ?? []), ...(contas.data ?? [])].map(
+            (r: { id: string; nome: string }) => [r.id, r.nome],
+          ),
+        );
+
         const cliente = await clientePadrao();
         const historico = [
           ...corpo.data.historico,
@@ -83,7 +95,8 @@ export const Route = createFileRoute("/api/agente/chat")({
           ferramentas: FERRAMENTAS_AGENTE,
           ehEscrita: (nome) => !ehLeitura(nome),
           descreverEscrita: (nome, args) =>
-            capacidadePorNome(nome)?.descreverAcao?.(args) ?? `Executar ${nome}`,
+            capacidadePorNome(nome)?.descreverAcao?.(args, (id) => nomes.get(id)) ??
+            `Executar ${nome}`,
           executarLeitura: async (chamada) =>
             JSON.stringify(await executarCapacidade(chamada.nome, contexto, chamada.args)),
           signal: request.signal,

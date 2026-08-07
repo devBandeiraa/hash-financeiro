@@ -30,6 +30,9 @@ export interface ContextoCapacidade {
  */
 export type NaturezaCapacidade = "leitura" | "escrita";
 
+/** Traduz um UUID em nome legível (categoria, conta) para a confirmação. */
+export type ResolvedorDeNome = (id: string) => string | undefined;
+
 export interface Capacidade<Forma extends z.ZodRawShape = z.ZodRawShape> {
   nome: string;
   titulo: string;
@@ -39,11 +42,16 @@ export interface Capacidade<Forma extends z.ZodRawShape = z.ZodRawShape> {
   natureza: NaturezaCapacidade;
   /**
    * Frase curta para o usuário confirmar. Só nas de escrita.
+   *
+   * Recebe um resolvedor de nomes porque os argumentos carregam UUID, e
+   * "criar regra UBER -> 1111-0000-..." não é uma confirmação que alguém
+   * consiga avaliar. Quem chama injeta o mapa que já tem em mãos.
+   *
    * `any` porque o catálogo é heterogêneo: cada capacidade tem sua própria
    * forma de argumentos, e tipar a menos quebraria a atribuição do catálogo.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  descreverAcao?: (args: any) => string;
+  descreverAcao?: (args: any, nomeDe?: ResolvedorDeNome) => string;
   executar: (ctx: ContextoCapacidade, args: z.infer<z.ZodObject<Forma>>) => Promise<unknown>;
 }
 
@@ -218,8 +226,11 @@ export const criarTransacao = {
     "Registra manualmente uma transação (entrada ou saída) em uma conta do usuário. Use listar_contas_categorias antes para obter contaId e categoriaId válidos.",
   entrada: entradaCriarTransacao,
   natureza: "escrita",
-  descreverAcao: (a) =>
-    `Criar ${a.tipo === "DEBITO" ? "saída" : "entrada"} de R$ ${a.valor.toFixed(2)} em ${a.data}: "${a.descricao}"`,
+  descreverAcao: (a, nomeDe) => {
+    const categoria = a.categoriaId ? ` em ${nomeDe?.(a.categoriaId) ?? "categoria"}` : "";
+    const especie = a.tipo === "DEBITO" ? "saída" : "entrada";
+    return `Criar ${especie} de R$ ${a.valor.toFixed(2)} em ${a.data}: "${a.descricao}"${categoria}`;
+  },
   async executar({ supabase, userId }, args) {
     const { data: conta, error: erroConta } = await supabase
       .from("contas")
@@ -248,8 +259,9 @@ export const criarTransacao = {
         valor: args.valor,
         tipo: args.tipo,
         categoria_id: args.categoriaId ?? null,
-        // Categoria escolhida na criação é decisão do usuário, não do motor.
-        categoria_origem: args.categoriaId ? "usuario" : "sistema",
+        // Quem escolheu a categoria foi um modelo (agente ou cliente MCP),
+        // mesmo que sob confirmação do usuário. A trilha registra isso.
+        categoria_origem: args.categoriaId ? "ia" : "sistema",
         origem: "MANUAL",
         hash_dedupe: hash,
       })
@@ -282,15 +294,18 @@ export const categorizarTransacao = {
     "Altera a categoria de uma transação existente. Útil para corrigir classificações erradas feitas pelo motor automático.",
   entrada: entradaCategorizar,
   natureza: "escrita",
-  descreverAcao: (a) =>
+  descreverAcao: (a, nomeDe) =>
     a.categoriaId
-      ? `Alterar a categoria da transação ${a.transacaoId}`
-      : `Remover a categoria da transação ${a.transacaoId}`,
+      ? `Alterar a categoria deste lançamento para ${nomeDe?.(a.categoriaId) ?? "outra categoria"}`
+      : "Remover a categoria deste lançamento",
   async executar({ supabase }, args) {
-    // Pedido explícito do usuário — a origem passa a `usuario`, não `ia`.
+    // `ia` porque um modelo escolheu esta categoria. A confirmação do usuário
+    // legitima a ação, mas não apaga o fato de um modelo ter participado --
+    // é exatamente isso que a auditoria precisa saber. Correção feita pelo
+    // dropdown da interface continua marcando `usuario`.
     const { data, error } = await supabase
       .from("transacoes")
-      .update({ categoria_id: args.categoriaId, categoria_origem: "usuario" })
+      .update({ categoria_id: args.categoriaId, categoria_origem: "ia" })
       .eq("id", args.transacaoId)
       .select("id, descricao, categoria_id, categoria_origem")
       .maybeSingle();
@@ -314,7 +329,10 @@ export const criarRegra = {
     "Cria uma regra que categoriza automaticamente lançamentos futuros cuja descrição contenha a palavra-chave.",
   entrada: entradaCriarRegra,
   natureza: "escrita",
-  descreverAcao: (a) => `Criar regra: descrições com "${a.palavraChave.toUpperCase()}" → categoria`,
+  descreverAcao: (a, nomeDe) =>
+    `Criar regra: descrições com "${a.palavraChave.toUpperCase()}" → ${
+      nomeDe?.(a.categoriaId) ?? "categoria"
+    }`,
   async executar({ supabase, userId }, args) {
     const { data, error } = await supabase
       .from("regras_categorizacao")
@@ -324,8 +342,10 @@ export const criarRegra = {
         categoria_id: args.categoriaId,
         prioridade: args.prioridade ?? 100,
         ativa: true,
-        // Pedida pelo usuário na conversa — não é regra promovida de sugestão.
-        origem: "usuario",
+        // Um modelo escolheu a palavra-chave e a categoria, ainda que o
+        // usuário tenha pedido e confirmado. Marca `ia` pelo mesmo motivo
+        // que `categorizar_transacao`.
+        origem: "ia",
       })
       .select("id, palavra_chave, categoria_id, prioridade, ativa, origem")
       .single();
@@ -351,7 +371,7 @@ export interface CapacidadeExecutavel {
   entrada: z.ZodRawShape;
   natureza: NaturezaCapacidade;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  descreverAcao?: (args: any) => string;
+  descreverAcao?: (args: any, nomeDe?: ResolvedorDeNome) => string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   executar: (ctx: ContextoCapacidade, args: any) => Promise<unknown>;
 }

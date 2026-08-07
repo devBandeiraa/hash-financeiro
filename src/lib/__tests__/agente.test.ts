@@ -62,7 +62,10 @@ describe("montarSystemAgente", () => {
     const s = montarSystemAgente();
     expect(s).toMatch(/nunca invente/i);
     expect(s).toMatch(/fora de finanças pessoais/i);
-    expect(s).toMatch(/PROPOSTAS/);
+    expect(s).toMatch(/PROPOSTA/);
+    // A chamada da ferramenta E a proposta: se o modelo pedir permissao antes
+    // de chamar, nada aparece na tela para o usuario confirmar.
+    expect(s).toMatch(/CHAME a ferramenta/);
   });
 });
 

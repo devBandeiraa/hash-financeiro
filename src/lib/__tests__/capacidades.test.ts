@@ -174,3 +174,109 @@ describe("compatibilidade com o servidor MCP", () => {
     }
   });
 });
+
+describe("procedência das escritas feitas por modelo", () => {
+  /** Captura o payload enviado ao insert/update. */
+  function espiao(linhas: Record<string, unknown[]> = {}) {
+    const payloads: Array<{ tabela: string; valores: Record<string, unknown> }> = [];
+    function builder(tabela: string) {
+      const api: Record<string, unknown> = {
+        select: () => api,
+        order: () => api,
+        limit: () => api,
+        single: () => Promise.resolve({ data: { id: "novo" }, error: null }),
+        maybeSingle: () =>
+          Promise.resolve({ data: (linhas[tabela] ?? [{ id: "achado" }])[0], error: null }),
+        insert: (valores: Record<string, unknown>) => {
+          payloads.push({ tabela, valores });
+          return api;
+        },
+        update: (valores: Record<string, unknown>) => {
+          payloads.push({ tabela, valores });
+          return api;
+        },
+        then: (r: (v: unknown) => unknown) =>
+          Promise.resolve({ data: linhas[tabela] ?? [], error: null }).then(r),
+      };
+      for (const op of ["gte", "lt", "lte", "eq", "ilike", "is"]) api[op] = () => api;
+      return api;
+    }
+    return { supabase: { from: builder }, payloads };
+  }
+
+  it("regra criada pelo agente nasce com origem 'ia'", async () => {
+    const { supabase, payloads } = espiao();
+    await executarCapacidade(
+      "criar_regra",
+      { supabase, userId: "u1" },
+      { palavraChave: "uber", categoriaId: "11111111-0000-4000-8000-000000000002" },
+    );
+    const regra = payloads.find((p) => p.tabela === "regras_categorizacao");
+    expect(regra?.valores).toMatchObject({ origem: "ia", palavra_chave: "UBER" });
+  });
+
+  it("recategorização feita pelo agente marca 'ia', não 'usuario'", async () => {
+    const { supabase, payloads } = espiao();
+    await executarCapacidade(
+      "categorizar_transacao",
+      { supabase, userId: "u1" },
+      {
+        transacaoId: "22222222-0000-4000-8000-000000000001",
+        categoriaId: "11111111-0000-4000-8000-000000000002",
+      },
+    );
+    expect(payloads[0]?.valores).toMatchObject({ categoria_origem: "ia" });
+  });
+
+  it("transação criada sem categoria não finge procedência de IA", async () => {
+    const { supabase, payloads } = espiao();
+    await executarCapacidade(
+      "criar_transacao",
+      { supabase, userId: "u1" },
+      {
+        contaId: "33333333-0000-4000-8000-000000000001",
+        data: "2026-08-07",
+        descricao: "PADARIA",
+        valor: 12.5,
+        tipo: "DEBITO",
+      },
+    );
+    const t = payloads.find((p) => p.tabela === "transacoes");
+    expect(t?.valores).toMatchObject({ categoria_origem: "sistema", origem: "MANUAL" });
+  });
+});
+
+describe("frase de confirmação (é o que o usuário lê antes de clicar)", () => {
+  const nomeDe = (id: string) => ({ "cat-transporte": "Transporte", "conta-1": "Nubank" })[id];
+
+  it("mostra o nome da categoria, não o UUID", () => {
+    const criarRegra = capacidadePorNome("criar_regra");
+    expect(
+      criarRegra?.descreverAcao?.({ palavraChave: "uber", categoriaId: "cat-transporte" }, nomeDe),
+    ).toBe('Criar regra: descrições com "UBER" → Transporte');
+  });
+
+  it("descreve valor, tipo e data ao criar transação", () => {
+    const criar = capacidadePorNome("criar_transacao");
+    expect(
+      criar?.descreverAcao?.(
+        {
+          contaId: "conta-1",
+          data: "2026-08-07",
+          descricao: "PADARIA",
+          valor: 12.5,
+          tipo: "DEBITO",
+          categoriaId: "cat-transporte",
+        },
+        nomeDe,
+      ),
+    ).toBe('Criar saída de R$ 12.50 em 2026-08-07: "PADARIA" em Transporte');
+  });
+
+  it("degrada sem quebrar quando o nome não resolve", () => {
+    const criarRegra = capacidadePorNome("criar_regra");
+    expect(
+      criarRegra?.descreverAcao?.({ palavraChave: "uber", categoriaId: "desconhecida" }),
+    ).toContain("categoria");
+  });
+});
