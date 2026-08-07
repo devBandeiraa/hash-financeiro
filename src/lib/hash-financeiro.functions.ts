@@ -803,3 +803,44 @@ export const insightMensal = createServerFn({ method: "POST" })
 
     return { texto, agregado, doCache: false, geradoEm, iaDisponivel: true };
   });
+
+/**
+ * Fase B1 — executa uma ferramenta do agente isoladamente, sob a sessão.
+ *
+ * Existe para as ferramentas serem chamáveis e testáveis antes do loop de tool
+ * use da Fase B2, e é o mesmo ponto de entrada que o agente usará depois.
+ *
+ * SEGURANÇA: o `userId` vem do middleware, nunca do input. Ferramentas de
+ * escrita são recusadas aqui — a Fase B3 as transforma em proposta com
+ * confirmação. Assim nenhuma escrita disparada por modelo escapa por engano.
+ */
+export const executarFerramentaAgente = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        nome: z.string().min(1).max(60),
+        args: z.record(z.string(), z.unknown()).default({}),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }): Promise<{ nome: string; resultadoJson: string }> => {
+    const { ehLeitura } = await import("@/lib/agente/ferramentas");
+    if (!ehLeitura(data.nome)) {
+      throw new Error(
+        `A ferramenta "${data.nome}" altera dados e precisa de confirmação explícita.`,
+      );
+    }
+
+    const { executarCapacidade } = await import("@/lib/capacidades");
+    const resultado = await executarCapacidade(
+      data.nome,
+      { supabase: context.supabase, userId: context.userId },
+      data.args,
+    );
+
+    // Serializado de propósito: é exatamente a forma que o `tool_result` do
+    // loop da Fase B2 precisa, e evita o serializador do Start recusar
+    // um payload de forma dinâmica.
+    return { nome: data.nome, resultadoJson: JSON.stringify(resultado) };
+  });
