@@ -20,11 +20,12 @@ export const categorizarTransacaoTool = defineTool({
   handler: async (args, ctx: ToolContext) => {
     const supabase = supabaseForUser(ctx);
 
+    // Vem de uma acao explicita do usuario via MCP -- origem `usuario`.
     const { data, error } = await supabase
       .from("transacoes")
-      .update({ categoria_id: args.categoriaId })
+      .update({ categoria_id: args.categoriaId, categoria_origem: "usuario" })
       .eq("id", args.transacaoId)
-      .select("id, descricao, categoria_id")
+      .select("id, descricao, categoria_id, categoria_origem")
       .maybeSingle();
 
     if (error) throw new Error(`Erro ao categorizar: ${error.message}`);
