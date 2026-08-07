@@ -8,6 +8,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
+/**
+ * Teto por mensagem. O loop já limita as iterações de ferramenta, mas nada
+ * impede um turno individual de pendurar: sem isto a requisição ficaria aberta
+ * até o cliente desistir.
+ */
+const TIMEOUT_MS = 90_000;
+
 const entrada = z.object({
   mensagem: z.string().trim().min(1).max(2000),
   /** Histórico da sessão, devolvido pelo servidor a cada resposta. */
@@ -99,7 +106,8 @@ export const Route = createFileRoute("/api/agente/chat")({
             `Executar ${nome}`,
           executarLeitura: async (chamada) =>
             JSON.stringify(await executarCapacidade(chamada.nome, contexto, chamada.args)),
-          signal: request.signal,
+          // Aborta se o cliente sumir OU se estourar o teto da mensagem.
+          signal: AbortSignal.any([request.signal, AbortSignal.timeout(TIMEOUT_MS)]),
         });
 
         const codificador = new TextEncoder();

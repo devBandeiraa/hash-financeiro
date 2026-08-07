@@ -25,6 +25,9 @@ Projeto de portfólio focado em três eixos: **processamento de dados**,
   determinística ([detalhes](#inteligência-artificial)).
 - **Insights mensais** — resumo em português das variações do mês, gerado a
   partir de totais agregados e exibido junto com os números que o embasam.
+- **Agente conversacional** — pergunte "quanto gastei com transporte esse mês?"
+  e ele consulta de verdade, com as mesmas ferramentas do servidor MCP. Escrita
+  só com confirmação ([detalhes](#agente-conversacional)).
 - **Dashboard** — entradas, saídas, saldo, gastos por categoria (pizza +
   ranking) e série diária, filtrados por mês.
 - **Correção manual** — trocar a categoria de qualquer transação; criar regra
@@ -55,7 +58,10 @@ src/lib/ai/           modelo.server.ts (timeout/retry/parse) + provedores/
 src/lib/insights/     agregar.ts — agregação mensal e prompt (funções puras)
 src/lib/types/        contratos de domínio compartilhados
 src/lib/hash-financeiro.functions.ts   camada de serviço (server functions)
-src/components/ia/    prévia de sugestões, painel de insights, badge de origem
+src/lib/capacidades/  implementação única, compartilhada por MCP e agente
+src/lib/agente/       loop de tool use, prompt, leitura do streaming
+src/lib/mcp/          servidor MCP com OAuth (adaptador sobre capacidades)
+src/components/ia/    sugestões, insights, badge de origem, chat do agente
 src/routes/           / (landing), /auth, /_authenticated/*
 src/lib/__tests__/    testes unitários dos serviços puros
 ```
@@ -143,6 +149,82 @@ O cache de insights é invalidado por **impressão digital dos agregados**, não
 por TTL: se os números mudam, o texto é regerado. Nunca se mostra uma análise
 que não corresponde mais aos dados.
 
+## Agente conversacional
+
+Em `/assistente`: você pergunta em português, o agente **consulta os dados com
+ferramentas** e responde com o número real. Se pedir uma alteração, ela vira
+uma proposta com botão de confirmar.
+
+### O servidor MCP virou a fundação, não um anexo
+
+O projeto já expunha um **servidor MCP com OAuth** — qualquer cliente MCP
+externo (Claude Desktop, por exemplo) consulta estas finanças sob RLS. O agente
+interno consome **exatamente as mesmas capacidades**.
+
+Isso não era verdade de graça. Existiam duas implementações paralelas da mesma
+coisa — as ferramentas do MCP e as server functions do app — e elas **já tinham
+divergido**: `resumo_dashboard` e `resumoDashboard` calculavam o fim do mês de
+formas diferentes. Hoje há uma implementação só:
+
+```
+src/lib/capacidades/     7 capacidades, sem saber por qual protocolo vieram
+  ├── mcp/adaptador.ts        OAuth   → contexto   (clientes externos)
+  └── agente/ferramentas.ts   sessão  → contexto   (agente interno)
+```
+
+O agente **não dá a volta pelo OAuth do próprio servidor**: MCP e sessão
+convergem no mesmo objeto — um client Supabase autenticado como o usuário — e é
+o RLS do banco que isola, nos dois caminhos.
+
+### Como o loop funciona
+
+Modelo pede ferramenta → executa → devolve o resultado → modelo responde,
+encadeando quantas precisar. A resposta chega em **streaming** (NDJSON, um
+evento por linha), então o texto aparece conforme é gerado.
+
+O loop vive em `agente/conversa.ts` e não conhece provedor nem banco: recebe um
+`ClienteModelo` e um executor. É isso que permite testar encadeamento, erro de
+ferramenta e estouro de limite sem tocar a rede.
+
+### Escrita nunca executa sozinha
+
+Capacidade de escrita **não roda no loop**. Ela vira uma proposta que sobe para
+a tela, e ao modelo devolvemos um resultado marcado como `pendente` — o que o
+faz perguntar em vez de afirmar que fez. Só o clique do usuário chama
+`confirmarAcaoAgente`.
+
+A frase de confirmação resolve os UUIDs para nome (`descrições com "UBER" →
+Transporte`), porque uma confirmação que ninguém consegue avaliar não é
+confirmação.
+
+Escrita vinda do agente ou de cliente MCP marca `origem = 'ia'`. A confirmação
+legitima a ação, mas não apaga o fato de um modelo ter escolhido a categoria —
+e é isso que a auditoria precisa saber. Correção pelo dropdown da interface
+continua marcando `usuario`.
+
+### Guardrails
+
+|                     |                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| `userId`            | sempre da sessão; **nunca** entra em schema de ferramenta — há teste travando isso |
+| Iterações           | máximo 6 idas e voltas por mensagem                                                |
+| Timeout             | 90s por mensagem, e aborta se o cliente desconectar                                |
+| Argumentos          | validados por zod **antes** de tocar o banco; erro volta ao modelo, que corrige    |
+| Escopo              | pedido fora de finanças pessoais é recusado sem chamar ferramenta                  |
+| Falha de ferramenta | volta como resultado, não como exceção — a conversa não cai                        |
+
+### Dois detalhes que só apareceram contra a API real
+
+Ficam registrados porque custaram tempo e não aparecem com mock:
+
+1. **O Gemini 3.x recusa (400) um `functionCall` reenviado sem a
+   `thoughtSignature`** que ele mesmo emitiu — e o atalho `chunk.functionCalls`
+   do SDK descarta essa assinatura. É preciso ler `candidates[0].content.parts`.
+2. **Dizer ao modelo "peça confirmação" faz ele pedir em prosa, sem chamar a
+   ferramenta** — e aí não existe proposta estruturada, nem botão na tela. O
+   prompt precisa deixar claro que _chamar a ferramenta é_ o mecanismo de
+   proposta.
+
 ## Modelo de dados
 
 `perfis`, `contas`, `categorias`, `regras_categorizacao`, `transacoes`,
@@ -180,7 +262,7 @@ npm test   # vitest: funções puras — sem rede, sem banco, sem cota de IA
 $env:IA_PING="1"; npm test   # + ping real contra o provedor (consome cota)
 ```
 
-73 testes cobrem os casos difíceis: data impossível (`31/02`), milhar vs.
+112 testes cobrem os casos difíceis: data impossível (`31/02`), milhar vs.
 decimal, aspas com separador dentro, extrato PDF, estabilidade do hash,
 precedência entre regra do usuário e regra do sistema, e — na camada de IA —
 JSON quebrado, categoria alucinada fora da lista, retry só em falha

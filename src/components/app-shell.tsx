@@ -12,6 +12,7 @@ const links = [
   { to: "/dashboard", rotulo: "Dashboard" },
   { to: "/importar", rotulo: "Importar" },
   { to: "/transacoes", rotulo: "Transações" },
+  { to: "/assistente", rotulo: "Assistente" },
   { to: "/regras", rotulo: "Regras" },
   { to: "/privacidade", rotulo: "Privacidade" },
 ] as const;

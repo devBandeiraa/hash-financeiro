@@ -62,9 +62,18 @@ export async function autenticarRequisicao(request: Request): Promise<ContextoCa
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
   });
 
-  const { data, error } = await supabase.auth.getClaims(token);
-  if (error || !data?.claims?.sub) throw new NaoAutorizadoError("Token inválido.");
+  // `getClaims` lança em token malformado em vez de devolver `error` — sem
+  // este catch um token forjado viraria 500 em vez de 401.
+  let sub: string | undefined;
+  try {
+    const { data, error } = await supabase.auth.getClaims(token);
+    if (error) throw new NaoAutorizadoError("Token inválido.");
+    sub = data?.claims?.sub;
+  } catch {
+    throw new NaoAutorizadoError("Token inválido.");
+  }
+  if (!sub) throw new NaoAutorizadoError("Token inválido.");
 
   // O userId vem do JWT verificado — nunca do corpo da requisição.
-  return { supabase, userId: data.claims.sub };
+  return { supabase, userId: sub };
 }
