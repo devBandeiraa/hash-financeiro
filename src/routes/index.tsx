@@ -3,13 +3,17 @@ import { useEffect, useState } from "react";
 import {
   ArrowRight,
   BarChart3,
+  Bot,
+  Check,
   FileSpreadsheet,
   Fingerprint,
   Lock,
+  MessageSquare,
   ShieldCheck,
   Sparkles,
   Tags,
   Upload,
+  X,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -20,17 +24,23 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hash Financeiro — do extrato ao dashboard em segundos" },
+      {
+        title:
+          "Hash Financeiro — do extrato ao dashboard, com um assistente que consulta de verdade",
+      },
       {
         name: "description",
         content:
-          "Importe o extrato do banco em CSV ou PDF, veja a prévia antes de confirmar, categorize tudo automaticamente e descubra para onde vai o seu dinheiro.",
+          "Importe o extrato do banco em CSV ou PDF, categorize tudo automaticamente e pergunte em português para onde foi o seu dinheiro. O assistente consulta os seus dados — não inventa números — e só altera nada com a sua confirmação.",
       },
-      { property: "og:title", content: "Hash Financeiro — do extrato ao dashboard em segundos" },
+      {
+        property: "og:title",
+        content: "Hash Financeiro — do extrato ao dashboard, com assistente de IA",
+      },
       {
         property: "og:description",
         content:
-          "Importe o extrato em CSV ou PDF, categorize automaticamente e acompanhe seus gastos com privacidade por padrão.",
+          "Categorização automática, insights mensais e um assistente que responde com o número real dos seus dados. Privacidade por padrão.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -54,9 +64,9 @@ const vantagens = [
   },
   {
     icone: Tags,
-    titulo: "Categorização automática",
+    titulo: "Categorização automática, com IA de reserva",
     texto:
-      "Motor determinístico de palavras-chave com prioridade. Suas regras vencem as do sistema e reclassificam o histórico na hora — sem caixa-preta.",
+      "Um motor determinístico de palavras-chave resolve a maior parte — reprodutível, sem caixa-preta. O que sobra vai para a IA, que sugere; você aceita e a sugestão vira regra. O sistema fica mais previsível com o uso, não menos.",
   },
   {
     icone: BarChart3,
@@ -94,6 +104,12 @@ const passos = [
     titulo: "3 · Acompanhe",
     texto: "Tudo categorizado e no dashboard, com regras suas para o próximo import.",
   },
+  {
+    icone: MessageSquare,
+    titulo: "4 · Pergunte",
+    texto:
+      "“Quanto gastei com transporte esse mês?” O assistente consulta e responde com o número real.",
+  },
 ] as const;
 
 function Index() {
@@ -118,7 +134,7 @@ function Index() {
         <div className="relative mx-auto flex max-w-6xl flex-col gap-14 px-6 pb-24 pt-28 sm:pt-32">
           <div className="max-w-3xl stage">
             <span className="inline-flex items-center gap-2 rounded-full border border-shader-hairline bg-shader-glass px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-on-shader-dim backdrop-blur">
-              Extrato → categorias → dashboard
+              Extrato → categorias → dashboard → perguntas
             </span>
             <h1 className="mt-6 text-[2.6rem] font-bold leading-[1.05] tracking-tight text-on-shader sm:text-6xl">
               Seu extrato bancário vira
@@ -127,7 +143,9 @@ function Index() {
             <p className="mt-6 max-w-2xl text-[1.05rem] leading-relaxed text-on-shader-dim sm:text-lg">
               O Hash Financeiro lê o arquivo que o seu banco exporta, mostra uma prévia honesta do
               que vai entrar, categoriza cada lançamento automaticamente e devolve um painel claro
-              do mês. Sem planilha, sem digitação, sem surpresa no fim do mês.
+              do mês. E quando restar dúvida, você{" "}
+              <span className="text-on-shader">pergunta em português</span> — o assistente consulta
+              os seus dados e responde com o número real.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -207,10 +225,10 @@ function Index() {
         <div className="mx-auto max-w-6xl px-6 py-20">
           <p className="eyebrow">Como funciona</p>
           <h2 className="mt-2 max-w-xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Três passos entre o arquivo e a resposta
+            Do arquivo à resposta em quatro passos
           </h2>
 
-          <ol className="mt-10 grid gap-4 md:grid-cols-3">
+          <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {passos.map((p) => (
               <li key={p.titulo} className="rounded-lg border border-hairline p-5">
                 <p.icone className="h-5 w-5 text-signal" aria-hidden />
@@ -221,6 +239,120 @@ function Index() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* ASSISTENTE — o diferencial */}
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.05fr]">
+          <div>
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-signal/10 text-signal">
+              <Bot className="h-[18px] w-[18px]" aria-hidden />
+            </span>
+            <p className="eyebrow mt-4">O diferencial</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Um assistente que consulta, não que chuta
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-faint">
+              Pergunte em português e ele vai buscar a resposta nos seus lançamentos com ferramentas
+              de verdade. Se o dado não existir, ele diz que não encontrou — nunca preenche a lacuna
+              com um número plausível.
+            </p>
+
+            <ul className="mt-6 grid gap-3 text-[13px] leading-relaxed text-ink-dim">
+              {[
+                {
+                  forte: "Nunca inventa número.",
+                  resto:
+                    "Cada valor sai de uma consulta ao seu banco de dados, feita na hora da pergunta.",
+                },
+                {
+                  forte: "Só altera com a sua confirmação.",
+                  resto:
+                    "Criar transação ou regra vira uma proposta com botão. Nada é gravado em silêncio.",
+                },
+                {
+                  forte: "As mesmas ferramentas do servidor MCP.",
+                  resto:
+                    "O app expõe um servidor MCP com OAuth; o assistente consome exatamente as mesmas capacidades, sob o mesmo isolamento por usuário.",
+                },
+              ].map((item) => (
+                <li key={item.forte} className="flex gap-3 rounded-md border border-hairline p-3">
+                  <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-signal" />
+                  <span>
+                    <strong className="font-semibold text-foreground">{item.forte}</strong>{" "}
+                    {item.resto}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <Button asChild className="mt-7">
+              <Link
+                to={logado ? "/assistente" : "/auth"}
+                {...(logado ? {} : { search: { modo: "criar" as const } })}
+              >
+                {logado ? "Abrir o assistente" : "Experimentar o assistente"}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+
+          {/* Réplica da conversa real — mesma linguagem visual do chat */}
+          <div
+            className="panel hairline-top stage overflow-hidden"
+            aria-label="Exemplo de conversa com o assistente"
+          >
+            <div className="flex items-center gap-2 border-b border-hairline px-5 py-3">
+              <Sparkles className="size-3.5 text-signal" aria-hidden />
+              <span className="eyebrow">Assistente</span>
+            </div>
+
+            <div className="space-y-4 p-5">
+              <div className="flex justify-end">
+                <p className="max-w-[85%] rounded-2xl rounded-br-sm bg-signal/10 px-4 py-2.5 text-sm">
+                  quanto gastei com transporte esse mês?
+                </p>
+              </div>
+
+              <div className="max-w-[85%] space-y-2">
+                <p className="flex items-center gap-1.5 text-[11px] text-ink-faint">
+                  <Sparkles className="size-3" aria-hidden />
+                  consultou resumo_dashboard
+                </p>
+                <p className="text-sm leading-relaxed">
+                  Neste mês você gastou <span className="num font-semibold">R$ 880,00</span> com
+                  transporte — 34,8% menos que em julho.
+                </p>
+              </div>
+
+              <div className="flex justify-end">
+                <p className="max-w-[85%] rounded-2xl rounded-br-sm bg-signal/10 px-4 py-2.5 text-sm">
+                  cria uma regra pra Uber virar Transporte
+                </p>
+              </div>
+
+              <div className="max-w-[85%] space-y-2">
+                <p className="text-sm leading-relaxed">
+                  Propus a criação da regra. Confirme na tela para que seja aplicada.
+                </p>
+                <div className="rounded-lg border border-signal/40 bg-signal/5 p-3 text-sm">
+                  <p className="eyebrow">Precisa da sua confirmação</p>
+                  <p className="mt-1">Criar regra: descrições com “UBER” → Transporte</p>
+                  <div className="mt-2 flex gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">
+                      <Check className="size-3.5" aria-hidden />
+                      Confirmar
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-md border border-hairline px-3 py-1.5 text-xs font-medium text-ink-dim">
+                      <X className="size-3.5" aria-hidden />
+                      Descartar
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
