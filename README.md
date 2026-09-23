@@ -32,6 +32,10 @@ Projeto de portfólio focado em três eixos: **processamento de dados**,
   ranking) e série diária, filtrados por mês.
 - **Correção manual** — trocar a categoria de qualquer transação; criar regra
   nova reclassifica o histórico não categorizado na hora.
+- **Limpeza de dados** — apagar em lote só o que veio de importação (CSV/PDF),
+  mantendo lançamentos manuais e regras; ou excluir uma conta inteira, o que
+  leva as transações dela junto (`ON DELETE CASCADE`). As duas ações pedem
+  confirmação explícita antes de rodar.
 - **Privacidade** — página com as garantias e botão de exclusão total (direito
   ao esquecimento).
 
@@ -224,6 +228,14 @@ Ficam registrados porque custaram tempo e não aparecem com mock:
    ferramenta** — e aí não existe proposta estruturada, nem botão na tela. O
    prompt precisa deixar claro que _chamar a ferramenta é_ o mecanismo de
    proposta.
+3. **O loop de conversa não herdava o `esforco: "baixo"` da chamada de
+   categorização** — cada turno (até 6 por mensagem) ficava no orçamento de
+   raciocínio padrão do modelo, sem teto de saída. Corrigido em
+   `agente/conversa.ts`. Um benchmark isolado contra a API real, porém, mostrou
+   variância grande (2s a 30s+) nos dois cenários — no tier gratuito isso
+   parece dominado por fila/rede do provedor, não só pelo orçamento de
+   raciocínio. A mudança fica porque é de graça e remove uma variável do
+   controle do time, não porque resolve sozinha toda lentidão percebida.
 
 ## Modelo de dados
 
