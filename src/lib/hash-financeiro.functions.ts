@@ -81,6 +81,19 @@ export const criarConta = createServerFn({ method: "POST" })
     return { id: criada.id, nome: criada.nome, tipo: criada.tipo as TipoConta };
   });
 
+/**
+ * Apaga uma conta do usuário. `ON DELETE CASCADE` no banco já leva junto todas
+ * as transações dessa conta — não precisa apagar linha por linha aqui.
+ */
+export const excluirConta = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("contas").delete().eq("id", data.id);
+    if (error) throw new Error("Não foi possível excluir a conta.");
+    return { ok: true };
+  });
+
 export const listarCategorias = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<Categoria[]> => {
@@ -293,6 +306,35 @@ export const atualizarCategoriaTransacao = createServerFn({ method: "POST" })
       .eq("id", data.id);
     if (error) throw new Error("Não foi possível atualizar a categoria.");
     return { ok: true };
+  });
+
+/** Quantas transações importadas (CSV ou PDF) existem, para o diálogo de confirmação. */
+export const contarTransacoesImportadas = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<{ total: number }> => {
+    const { count, error } = await context.supabase
+      .from("transacoes")
+      .select("id", { count: "exact", head: true })
+      .in("origem", ["CSV", "PDF"]);
+    if (error) throw new Error("Não foi possível contar as transações importadas.");
+    return { total: count ?? 0 };
+  });
+
+/**
+ * Apaga só o que veio de arquivo importado (origem CSV ou PDF). Lançamentos
+ * manuais e regras de categorização ficam de pé — é uma limpeza de importação,
+ * não o direito ao esquecimento de `excluirMinhaConta`.
+ */
+export const excluirTransacoesImportadas = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<{ apagadas: number }> => {
+    const { data, error } = await context.supabase
+      .from("transacoes")
+      .delete()
+      .in("origem", ["CSV", "PDF"])
+      .select("id");
+    if (error) throw new Error("Não foi possível apagar as transações importadas.");
+    return { apagadas: data?.length ?? 0 };
   });
 
 export const reclassificarTudo = createServerFn({ method: "POST" })

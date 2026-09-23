@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
 
 import { AppShell } from "@/components/app-shell";
 import { Panel } from "@/components/cfo/Panel";
@@ -10,6 +11,17 @@ import { SugestoesIa } from "@/components/ia/sugestoes-ia";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -21,6 +33,7 @@ import { extrairTextoPdf } from "@/lib/import/pdf.extract";
 import {
   analisarExtrato,
   criarConta,
+  excluirConta,
   importarExtrato,
   listarContas,
 } from "@/lib/hash-financeiro.functions";
@@ -39,6 +52,7 @@ function Importar() {
   const queryClient = useQueryClient();
   const buscarContas = useServerFn(listarContas);
   const novaConta = useServerFn(criarConta);
+  const removerConta = useServerFn(excluirConta);
   const analisar = useServerFn(analisarExtrato);
   const importar = useServerFn(importarExtrato);
 
@@ -63,6 +77,18 @@ function Importar() {
       toast.success("Conta criada.");
     },
     onError: () => toast.error("Não foi possível criar a conta."),
+  });
+
+  const excluir = useMutation({
+    mutationFn: (id: string) => removerConta({ data: { id } }),
+    onSuccess: (_r, id) => {
+      if (contaId === id) setContaId("");
+      queryClient.invalidateQueries({ queryKey: ["contas"] });
+      queryClient.invalidateQueries({ queryKey: ["transacoes"] });
+      queryClient.invalidateQueries({ queryKey: ["resumo"] });
+      toast.success("Conta e transações apagadas.");
+    },
+    onError: () => toast.error("Não foi possível excluir a conta."),
   });
 
   function limparArquivo() {
@@ -142,6 +168,47 @@ function Importar() {
                 ))}
               </SelectContent>
             </Select>
+
+            {(contas.data ?? []).length > 0 ? (
+              <ul className="space-y-1.5">
+                {(contas.data ?? []).map((c) => (
+                  <li
+                    key={c.id}
+                    className="flex items-center gap-2 rounded-md border border-hairline bg-surface-raised px-3 py-1.5 text-sm"
+                  >
+                    <span className="flex-1 truncate">{c.nome}</span>
+                    <span className="text-xs text-ink-faint">{c.tipo.toLowerCase()}</span>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Excluir conta ${c.nome}`}
+                          disabled={excluir.isPending}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Excluir "{c.nome}"?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Todas as transações importadas ou lançadas nessa conta são apagadas
+                            junto. Não há como desfazer.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => excluir.mutate(c.id)}>
+                            Excluir definitivamente
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
 
             <div className="space-y-2 rounded-lg border border-dashed border-hairline bg-surface-raised p-4">
               <Label htmlFor="nova-conta" className="eyebrow">

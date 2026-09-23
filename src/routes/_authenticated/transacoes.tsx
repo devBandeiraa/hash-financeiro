@@ -7,7 +7,19 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/app-shell";
 import { BadgeOrigem } from "@/components/ia/badge-ia";
 import { SugestoesIa } from "@/components/ia/sugestoes-ia";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -25,6 +37,8 @@ import {
 } from "@/components/ui/select";
 import {
   atualizarCategoriaTransacao,
+  contarTransacoesImportadas,
+  excluirTransacoesImportadas,
   listarCategorias,
   listarTransacoes,
 } from "@/lib/hash-financeiro.functions";
@@ -41,6 +55,8 @@ function Transacoes() {
   const buscar = useServerFn(listarTransacoes);
   const buscarCategorias = useServerFn(listarCategorias);
   const atualizar = useServerFn(atualizarCategoriaTransacao);
+  const contarImportadas = useServerFn(contarTransacoesImportadas);
+  const limparImportadas = useServerFn(excluirTransacoesImportadas);
 
   const [mes, setMes] = useState(() => new Date().toISOString().slice(0, 7));
   const [busca, setBusca] = useState("");
@@ -55,6 +71,11 @@ function Transacoes() {
     queryFn: () => buscar({ data: { mes, ...(busca ? { busca } : {}) } }),
   });
 
+  const totalImportadas = useQuery({
+    queryKey: ["transacoes-importadas-total"],
+    queryFn: () => contarImportadas({}),
+  });
+
   const mudarCategoria = useMutation({
     mutationFn: (vars: { id: string; categoriaId: string | null }) => atualizar({ data: vars }),
     onSuccess: () => {
@@ -62,6 +83,18 @@ function Transacoes() {
       queryClient.invalidateQueries({ queryKey: ["resumo"] });
     },
     onError: () => toast.error("Não foi possível atualizar a categoria."),
+  });
+
+  const limparImportacoes = useMutation({
+    mutationFn: () => limparImportadas({}),
+    onSuccess: ({ apagadas }) => {
+      queryClient.invalidateQueries({ queryKey: ["transacoes"] });
+      queryClient.invalidateQueries({ queryKey: ["transacoes-importadas-total"] });
+      queryClient.invalidateQueries({ queryKey: ["resumo"] });
+      toast.success(`${apagadas} transação(ões) importada(s) apagada(s).`);
+    },
+    onError: (erro) =>
+      toast.error(erro instanceof Error ? erro.message : "Não foi possível apagar as importações."),
   });
 
   return (
@@ -74,7 +107,7 @@ function Transacoes() {
             Corrija a categoria de qualquer lançamento — a mudança reflete no dashboard.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-end gap-2">
           <Input
             placeholder="Buscar descrição"
             value={busca}
@@ -88,6 +121,32 @@ function Transacoes() {
             className="w-44"
             aria-label="Mês"
           />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="destructive"
+                disabled={!totalImportadas.data?.total || limparImportacoes.isPending}
+              >
+                Limpar importações
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apagar todas as transações importadas?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {totalImportadas.data?.total ?? 0} transação(ões) vinda(s) de CSV ou PDF serão
+                  apagadas permanentemente, de todos os meses. Lançamentos manuais e regras de
+                  categorização não são afetados. Não há como desfazer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={() => limparImportacoes.mutate()}>
+                  Apagar definitivamente
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
