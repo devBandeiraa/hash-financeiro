@@ -37,10 +37,13 @@ export interface OpcoesConversa {
   descreverEscrita: (nome: string, args: Record<string, unknown>) => string;
   /** Teto de idas e voltas por mensagem. Padrão 6. */
   maxIteracoes?: number;
+  /** Teto de tokens por turno, raciocínio incluso. Padrão 4096. */
+  maxTokens?: number;
   signal?: AbortSignal;
 }
 
 const MAX_ITERACOES_PADRAO = 6;
+const MAX_TOKENS_PADRAO = 4096;
 
 export async function* conversarComAgente(opcoes: OpcoesConversa): AsyncGenerator<EventoAgente> {
   const {
@@ -51,6 +54,7 @@ export async function* conversarComAgente(opcoes: OpcoesConversa): AsyncGenerato
     ehEscrita,
     descreverEscrita,
     maxIteracoes = MAX_ITERACOES_PADRAO,
+    maxTokens = MAX_TOKENS_PADRAO,
     signal = new AbortController().signal,
   } = opcoes;
 
@@ -65,7 +69,10 @@ export async function* conversarComAgente(opcoes: OpcoesConversa): AsyncGenerato
     let texto = "";
     let chamadas: ChamadaFerramenta[] = [];
 
-    for await (const evento of cliente.conversar({ system, historico, ferramentas }, signal)) {
+    for await (const evento of cliente.conversar(
+      { system, historico, ferramentas, maxTokens, esforco: "baixo" },
+      signal,
+    )) {
       if (evento.tipo === "texto") {
         texto += evento.conteudo;
         yield { tipo: "texto", conteudo: evento.conteudo };

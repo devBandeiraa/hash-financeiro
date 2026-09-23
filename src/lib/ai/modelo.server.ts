@@ -272,6 +272,8 @@ export interface PedidoConversa {
   historico: TurnoConversa[];
   ferramentas: DeclaracaoFerramenta[];
   maxTokens?: number;
+  /** `baixo` desliga/minimiza o raciocínio — mesma semântica de `PedidoModelo`. */
+  esforco?: "baixo" | "normal";
 }
 
 /** O que o provedor emite enquanto gera. Texto chega em pedaços. */

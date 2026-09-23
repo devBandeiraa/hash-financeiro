@@ -158,6 +158,11 @@ async function* conversarGemini(
         systemInstruction: pedido.system,
         abortSignal: signal,
         ...(pedido.maxTokens ? { maxOutputTokens: pedido.maxTokens } : {}),
+        // Sem isto o modelo usa o orçamento de raciocínio padrão dele em CADA
+        // turno do loop de ferramentas — é o que fazia o agente parecer lento.
+        ...(pedido.esforco === "baixo"
+          ? { thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } }
+          : {}),
         ...(pedido.ferramentas.length
           ? { tools: [{ functionDeclarations: comoDeclaracoes(pedido.ferramentas) }] }
           : {}),
