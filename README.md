@@ -1,5 +1,7 @@
 # Hash Financeiro
 
+[![CI](https://github.com/devBandeiraa/hash-financeiro/actions/workflows/ci.yml/badge.svg)](https://github.com/devBandeiraa/hash-financeiro/actions/workflows/ci.yml)
+
 Gestor financeiro pessoal: você importa o extrato do banco (CSV ou PDF), o
 sistema categoriza cada lançamento automaticamente e um dashboard mostra para
 onde o dinheiro foi.
@@ -38,6 +40,18 @@ Projeto de portfólio focado em três eixos: **processamento de dados**,
   confirmação explícita antes de rodar.
 - **Privacidade** — página com as garantias e botão de exclusão total (direito
   ao esquecimento).
+
+## Como rodar
+
+Pré-requisitos: Node.js 22 e um projeto Supabase (o plano gratuito serve).
+
+```bash
+npm install
+cp .env.example .env   # preencha com as chaves do seu projeto Supabase
+npm run dev            # o endereço local aparece no terminal
+```
+
+Antes do primeiro acesso, aplique no banco do seu projeto os arquivos de `supabase/migrations`, em ordem, pelo SQL Editor do Supabase.
 
 ## Stack
 
