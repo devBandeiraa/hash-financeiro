@@ -6,6 +6,12 @@ Gestor financeiro pessoal: você importa o extrato do banco (CSV ou PDF), o
 sistema categoriza cada lançamento automaticamente e um dashboard mostra para
 onde o dinheiro foi.
 
+**Demo:** a publicar. Login por e-mail e senha.
+
+<!-- TODO(jhordan): trocar "a publicar" pelo link da demo publicada (passo a passo em docs/deploy.md). -->
+
+<!-- TODO(jhordan): gravar o GIF do fluxo importar → categorizar → dashboard → assistente, salvar em docs/demo.gif e trocar este comentário por: ![Fluxo: importar extrato, categorizar, dashboard e assistente](docs/demo.gif) -->
+
 Projeto de portfólio focado em três eixos: **processamento de dados**,
 **domínio fintech** e **segurança/LGPD**.
 
@@ -67,6 +73,10 @@ npm run dev            # o endereço local aparece no terminal
 ```
 
 <!-- TODO(jhordan): rodar `npm run db:migrate` contra um projeto Supabase real e confirmar o fluxo acima. Num banco em que as migrations já foram coladas à mão pelo SQL Editor, a CLI não tem o histórico e tentaria reaplicá-las: marque-as como aplicadas uma vez com `npx supabase migration repair --linked --status applied <versão>` para cada arquivo. -->
+
+Para publicar (Cloudflare Workers, plano gratuito), veja
+[docs/deploy.md](./docs/deploy.md): passo a passo, variáveis de ambiente e o
+que não funciona fora do Lovable (login com Google).
 
 ## Stack
 
