@@ -154,7 +154,9 @@ ressalvas registradas por honestidade:
 - **No tier gratuito o Google pode usar os prompts para treinar modelo.** É
   exatamente por isso que a minimização acima não é opcional neste projeto.
 - A alternativa (`IA_PROVEDOR=anthropic`) é paga, mas não treina em input de
-  API. Custo estimado: ~R$ 0,02 por importação com `claude-haiku-4-5`.
+  API. O padrão é `claude-haiku-5-5`, o mais barato da linha atual
+  (US$ 0,10 / US$ 0,50 por milhão de tokens de entrada/saída).
+  <!-- TODO(jhordan): medir o custo real de uma importação com claude-haiku-5-5 e publicar aqui. -->
 
 ### Degradação
 
