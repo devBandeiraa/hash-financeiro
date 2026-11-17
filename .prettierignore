@@ -13,3 +13,6 @@ src/integrations/
 src/routes/mcp.ts
 src/routes/\[.mcp\]/
 src/routes/\[.well-known\]/
+
+# Relatórios gerados por `npm run eval`.
+evals/resultados/

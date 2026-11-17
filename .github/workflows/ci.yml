@@ -43,3 +43,6 @@ jobs:
           npm run supabase:local
       - name: Testes de integração (RLS)
         run: npm run test:integracao
+      # Só o modo determinístico: o modo com IA consome cota e roda à mão.
+      - name: Eval da categorização (só regras, com piso)
+        run: npm run eval:regras

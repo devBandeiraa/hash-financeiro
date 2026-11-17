@@ -68,6 +68,9 @@ uploads/
 *.csv
 !src/**/fixtures/*.csv
 !src/**/__tests__/**/*.csv
+# Conjunto do eval: descrições sintéticas, sem dado real. Exceção pelo nome
+# exato, para nenhum outro CSV escapar desta regra.
+!evals/categorizacao.csv
 
 # ---------------------------------------------------------------------------
 # Ferramentas de IA, agentes e prompts

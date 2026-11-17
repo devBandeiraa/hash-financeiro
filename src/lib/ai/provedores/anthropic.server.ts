@@ -12,7 +12,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { ErroProvedor, IaIndisponivelError } from "../modelo.server";
 import type { ClienteModelo } from "../modelo.server";
 
-const MODELO_PADRAO = "claude-haiku-5-5";
+export const MODELO_PADRAO = "claude-haiku-5-5";
 const MAX_TOKENS_PADRAO = 16_000;
 
 function normalizarErro(erro: unknown): ErroProvedor {

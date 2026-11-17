@@ -1,0 +1,204 @@
+id;descricao;tipo;categoria_esperada;caso;observacao
+e001;COMPRA CARTAO IFOOD.COM AGENCIA DE RESTAURANTES ONLINE OSASCO BR;DEBITO;Alimentação;claro;
+e002;MERCADOLIVRE*MERCADOLIVRE OSASCO BR;DEBITO;Compras;claro;Marketplace generalista conta como Compras
+e003;PAGTO SALARIO REF 10/2026;CREDITO;Receita;claro;
+e004;UBER *TRIP HELP.UBER.COM;DEBITO;Transporte;claro;
+e005;DEB AUTOMATICO VIVO MOVEL;DEBITO;Serviços;claro;Telefonia
+e006;NETFLIX.COM;DEBITO;Lazer;claro;
+e007;PIX ENVIADO JOSE CARLOS PEREIRA;DEBITO;Não categorizado;sem_ancora;Transferência para pessoa física sem indicação do motivo
+e008;DEB AUT UNIMED BH;DEBITO;Saúde;claro;Plano de saúde
+e009;DEB AUTOMATICO ENEL DISTRIBUICAO SP;DEBITO;Moradia;claro;Conta de luz
+e010;ALURA CURSOS ONLINE;DEBITO;Educação;claro;
+e011;SUPERM GUANABARA 07;DEBITO;Alimentação;abreviacao;SUPERM = supermercado
+e012;MAGALU*PARC 03/10;DEBITO;Compras;abreviacao;Magalu = Magazine Luiza, parcela de compra
+e013;PIX RECEBIDO 34.567.890/0001-12;CREDITO;Receita;sem_ancora;Só o CNPJ do pagador, mas entrada sem outra pista é Receita
+e014;POSTO BR KM 32 ROD ANHANG;DEBITO;Transporte;abreviacao;Posto na Rodovia Anhanguera com nome truncado
+e015;TAR MANUT CTA;DEBITO;Serviços;abreviacao;Tarifa de manutenção de conta
+e016;DL*GOOGLE YouTube;DEBITO;Lazer;abreviacao;DL = dLocal intermediando YouTube Premium
+e017;PIX ENVIADO 11987654321;DEBITO;Não categorizado;sem_ancora;Só a chave telefone do destinatário
+e018;DROG SAO PAULO 4471;DEBITO;Saúde;abreviacao;DROG = Drogaria São Paulo, farmácia vai para Saúde
+e019;DA COPEL DIS 05/26;DEBITO;Moradia;abreviacao;DA = débito automático, Copel Distribuição = luz
+e020;PUC MG MENSAL PARC 06;DEBITO;Educação;abreviacao;Mensalidade de universidade abreviada
+e021;COMPRA DEB PAO DE ACUCAR 1234 SAO PAULO SP;DEBITO;Alimentação;claro;
+e022;AMAZON MARKETPLACE BR SAO PAULO;DEBITO;Compras;claro;
+e023;PIX RECEBIDO MARIANA COSTA LIMA;CREDITO;Receita;claro;Entrada de dinheiro, mesmo vinda de pessoa física, é Receita
+e024;99 TECNOLOGIA LTDA;DEBITO;Transporte;claro;99 é app de corrida
+e025;PAG CONTA CLARO SA;DEBITO;Serviços;claro;Telefonia
+e026;Spotify P2C4D9E1F;DEBITO;Lazer;claro;
+e027;APLICACAO CDB DI;DEBITO;Não categorizado;claro;Investimento é movimentação de patrimônio, não é gasto de consumo
+e028;PAG BOLETO AMIL ASSISTENCIA MEDICA;DEBITO;Saúde;claro;
+e029;PAG BOLETO CONDOMINIO EDIFICIO SOLAR DAS PALMEIRAS;DEBITO;Moradia;claro;
+e030;PAG BOLETO COLEGIO SANTA MARIA MENSALIDADE;DEBITO;Educação;claro;
+e031;COMPRA CARTAO ZE DELIVERY BEBIDAS;DEBITO;Alimentação;ambiguo;Entrega de bebidas pode ser ocasião social (Lazer), mas é delivery de consumo doméstico
+e032;COMPRA CARTAO LOJAS AMERICANAS 1123;DEBITO;Compras;ambiguo;Loja de departamento vende alimentos e eletrônicos, varejo geral é o mais provável
+e033;REND PAGO APLIC AUT MAIS;CREDITO;Receita;abreviacao;Rendimento de aplicação automática
+e034;POSTO E CONVENIENCIA ESTRELA DALVA;DEBITO;Transporte;ambiguo;Posto com conveniência, combustível é o gasto típico
+e035;PAG BOLETO PORTO SEGURO AUTO;DEBITO;Serviços;ambiguo;Seguro do carro poderia ir para Transporte, mas todo seguro fica em Serviços
+e036;DECOLAR.COM;DEBITO;Lazer;ambiguo;Agência vende passagem avulsa e pacote, presumida viagem a passeio
+e037;TED ENVIADA 237 1234 0056789-0;DEBITO;Não categorizado;sem_ancora;Só banco, agência e conta do destinatário
+e038;DROGA RAIA 0291;DEBITO;Saúde;ambiguo;Farmácia também vende cosmético e higiene, medicamento é o uso mais provável
+e039;DESENTUPIDORA SAO JORGE;DEBITO;Moradia;ambiguo;Serviço profissional, mas é manutenção da residência
+e040;PAPELARIA E MATERIAL ESCOLAR NOVO TEMPO;DEBITO;Educação;ambiguo;Papelaria poderia ser Compras, o nome indica material escolar
+e041;COMPRA CARTAO CARREFOUR HIPER 087 CAMPINAS SP;DEBITO;Alimentação;claro;Hipermercado, cesta típica é de alimentos
+e042;COMPRA CARTAO RENNER LJ 087 SHOP IGUATEMI;DEBITO;Compras;claro;
+e043;RENDIMENTO POUPANCA;CREDITO;Receita;claro;
+e044;AUTO POSTO IPIRANGA JARDINS SAO PAULO;DEBITO;Transporte;claro;Combustível
+e045;TIM CELULAR RECARGA;DEBITO;Serviços;claro;
+e046;DISNEY PLUS;DEBITO;Lazer;claro;
+e047;RESGATE CDB DI;CREDITO;Não categorizado;ambiguo;É entrada, mas devolve dinheiro próprio aplicado, só o rendimento seria Receita
+e048;FLEURY MEDICINA E SAUDE;DEBITO;Saúde;claro;Exames
+e049;DEB AUT SABESP;DEBITO;Moradia;claro;Água
+e050;UDEMY ONLINE COURSES;DEBITO;Educação;claro;
+e051;IFD*JAPA SUSHI DELIV;DEBITO;Alimentação;abreviacao;IFD = iFood, delivery com nome truncado
+e052;PAYPAL *ALIEXPRESS;DEBITO;Compras;abreviacao;E-commerce via intermediador PayPal
+e053;TED 001 0234 12345-6;CREDITO;Receita;sem_ancora;Só dados bancários do remetente, crédito sem contexto é Receita
+e054;UBR* PENDING.UBER.COM;DEBITO;Transporte;abreviacao;Pré-autorização de corrida Uber
+e055;TARIFA 0457 REF 10/26;DEBITO;Serviços;sem_ancora;Código não diz qual tarifa, mas qualquer tarifa bancária é Serviços
+e056;CHOPERIA PINGUIM RIB PRET;DEBITO;Lazer;abreviacao;Choperia em Ribeirão Preto, bar vai para Lazer
+e057;DOC ENVIADO 104 0321 00012345-7;DEBITO;Não categorizado;sem_ancora;Só dados bancários do destinatário
+e058;FARM PAGUE MENOS 0823 FORTALEZA;DEBITO;Saúde;abreviacao;FARM = farmácia
+e059;PGTO COND RES JD BOTAN;DEBITO;Moradia;abreviacao;Condomínio residencial com nome truncado
+e060;HTM*CURSOEXCELPRO;DEBITO;Educação;abreviacao;HTM = Hotmart, o produto é um curso
+e061;ASSAI ATACADISTA LJ 112 GUARULHOS;DEBITO;Alimentação;claro;
+e062;SHOPEE BRASIL;DEBITO;Compras;claro;
+e063;TED RECEBIDA CONSTRUTORA HORIZONTE LTDA;CREDITO;Receita;claro;
+e064;METRO SAO PAULO RECARGA;DEBITO;Transporte;claro;
+e065;TARIFA PACOTE DE SERVICOS;DEBITO;Serviços;claro;
+e066;COMPRA CARTAO CINEMARK SHOPPING ELDORADO;DEBITO;Lazer;claro;
+e067;SAQUE BANCO24HORAS 08/11 14:32;DEBITO;Não categorizado;sem_ancora;Saque em dinheiro, destino do gasto desconhecido
+e068;PIX ENVIADO CLINICA ODONTOLOGICA SORRISO;DEBITO;Saúde;claro;
+e069;PAG BOLETO COMGAS;DEBITO;Moradia;claro;Gás encanado
+e070;DEB AUT FACULDADE ESTACIO;DEBITO;Educação;claro;
+e071;AM PM CONVENIENCIA POSTO IPIRANGA 330;DEBITO;Alimentação;ambiguo;O nome é da loja de conveniência e não da bomba, logo lanche ou bebida
+e072;LEROY MERLIN CIA BRAS BRICOLAGEM;DEBITO;Compras;ambiguo;Material de reforma lembra Moradia, mas Moradia fica só com custos fixos do imóvel
+e073;REEMBOLSO UNIMED CONSULTA;CREDITO;Receita;ambiguo;Poderia abater Saúde, mas reembolso creditado é Receita
+e074;LATAM AIRLINES BRASIL;DEBITO;Transporte;ambiguo;Pode ser viagem a passeio, sem contexto passagem = Transporte e hospedagem = Lazer
+e075;PAYPAL *DROPBOX;DEBITO;Serviços;abreviacao;Assinatura de software via PayPal
+e076;AMAZON PRIME BR;DEBITO;Lazer;ambiguo;Assinatura inclui frete, mas o uso típico é o streaming
+e077;TRANSF ENTRE CONTAS 0001 98765-4;DEBITO;Não categorizado;sem_ancora;Não diz se é para terceiro nem o motivo
+e078;SMART FIT MENSALIDADE;DEBITO;Saúde;ambiguo;Academia poderia ser Lazer, critério adotado: academia = Saúde
+e079;DEB AUT CIA SANEAM PARANA;DEBITO;Moradia;abreviacao;Companhia de saneamento (Sanepar), conta de água
+e080;LIVRARIA DA VILA LJ 4;DEBITO;Educação;ambiguo;Livro pode ser leitura recreativa, critério adotado: livraria = Educação
+e081;COMPRA DEB PADARIA BELLA VISTA LTDA;DEBITO;Alimentação;claro;
+e082;MAGAZINE LUIZA LJ 0312 FRANCA SP;DEBITO;Compras;claro;
+e083;ESTORNO COMPRA MAGAZINE LUIZA;CREDITO;Receita;claro;Estorno é reembolso, crédito vai para Receita
+e084;ESTAPAR ESTACIONAMENTO AEROPORTO CGH;DEBITO;Transporte;claro;
+e085;ANUIDADE CARTAO PARC 04/12;DEBITO;Serviços;claro;Tarifa bancária
+e086;INGRESSO.COM;DEBITO;Lazer;claro;
+e087;TRANSF MESMA TITULARIDADE;CREDITO;Não categorizado;ambiguo;Entrada vinda de outra conta do próprio titular, não é renda nova
+e088;FARMACIA DE MANIPULACAO ESSENCIAL;DEBITO;Saúde;claro;
+e089;PAG BOLETO QUINTOANDAR ALUGUEL;DEBITO;Moradia;claro;
+e090;COURSERA;DEBITO;Educação;claro;
+e091;PANIF E CONF NOVA ESPER;DEBITO;Alimentação;abreviacao;Panificadora e confeitaria com nome truncado
+e092;CASAS PERNAMBUC 0034 RECIFE;DEBITO;Compras;abreviacao;Casas Pernambucanas truncado
+e093;DEPOSITO EM DINHEIRO AG 0987;CREDITO;Receita;sem_ancora;Pode ser dinheiro próprio, mas entrada sem contexto é Receita
+e094;EST SHOP VILLA LOBOS;DEBITO;Transporte;abreviacao;EST = estacionamento de shopping
+e095;APPLE.COM/BILL;DEBITO;Serviços;ambiguo;Pode ser iCloud, música ou app, assinatura digital genérica vai para Serviços
+e096;PAYPAL *NUUVEMJOGOS;DEBITO;Lazer;abreviacao;Loja de jogos via PayPal
+e097;PAG BOLETO 34191.79001 01043.510047 91020.150008 1 92340000012500;DEBITO;Não categorizado;sem_ancora;Só a linha digitável, beneficiário desconhecido
+e098;BLUEFIT ACAD MOOCA;DEBITO;Saúde;abreviacao;ACAD = academia, academia vai para Saúde
+e099;PAG BOLETO PREFEITURA DE SAO PAULO IPTU 2026 PARC 08;DEBITO;Moradia;claro;
+e100;EBANX*DESCOMPLICA;DEBITO;Educação;abreviacao;Plataforma de ensino via intermediador EBANX
+e101;MCDONALDS 05321 RIO DE JANEIRO BR;DEBITO;Alimentação;claro;
+e102;PETZ PET CENTER;DEBITO;Compras;ambiguo;Pet shop vende ração e serviço veterinário, varejo é o mais provável
+e103;CRED 13 SAL 1A PARC;CREDITO;Receita;abreviacao;Primeira parcela do 13º salário
+e104;LOCALIZA RENT A CAR;DEBITO;Transporte;ambiguo;Aluguel de carro pode ser de viagem a passeio, mas é deslocamento
+e105;GOOGLE *Google One;DEBITO;Serviços;claro;Armazenamento em nuvem
+e106;CLUBE ATLETICO PAULISTANO MENSALIDADE;DEBITO;Lazer;ambiguo;Clube social e esportivo vai para Lazer, academia pura iria para Saúde
+e107;COMPRA CARTAO 5502 ****8834 04/11;DEBITO;Não categorizado;sem_ancora;Compra sem nome do estabelecimento
+e108;HAPVIDA ASSISTENCIA MEDICA;DEBITO;Saúde;claro;
+e109;DEB AUTOMATICO CEMIG DISTRIBUICAO;DEBITO;Moradia;claro;
+e110;PIX ENVIADO ESCOLA DE IDIOMAS WIZARD;DEBITO;Educação;claro;
+e111;BAR E RESTAURANTE DO ZECA;DEBITO;Alimentação;ambiguo;Refeição é o uso mais provável, bar puro iria para Lazer
+e112;COMPRA CARTAO CASAS BAHIA ONLINE;DEBITO;Compras;claro;
+e113;DIVIDENDOS ITAUSA PN;CREDITO;Receita;claro;
+e114;SEM PARAR MENSALIDADE;DEBITO;Transporte;claro;Tag de pedágio
+e115;NET SERV COMUNIC SA;DEBITO;Serviços;abreviacao;NET Serviços de Comunicação, internet e TV
+e116;STEAM PURCHASE;DEBITO;Lazer;claro;
+e117;EC*0045812937;DEBITO;Não categorizado;sem_ancora;Só o código do estabelecimento
+e118;OTICAS CAROL;DEBITO;Saúde;ambiguo;Ótica vende óculos de sol (Compras), óculos de grau é o mais provável
+e119;Pagamento de conta - Light Servicos de Eletricidade;DEBITO;Moradia;claro;
+e120;SYMPLA*WORKSHOP UX;DEBITO;Educação;ambiguo;Sympla vende shows e cursos, o termo workshop indica curso
+e121;Compra no debito - Restaurante Sabor Mineiro;DEBITO;Alimentação;claro;
+e122;AMZN Mktp BR*2K4LP91;DEBITO;Compras;abreviacao;AMZN Mktp = Amazon Marketplace
+e123;CRED TRANSF 0001 33 445566;CREDITO;Receita;sem_ancora;Transferência recebida sem remetente, crédito vai para Receita
+e124;CCR AUTOBAN PEDAGIO;DEBITO;Transporte;claro;
+e125;MICROSOFT*MICROSOFT 365 P;DEBITO;Serviços;claro;
+e126;PlayStation Network;DEBITO;Lazer;claro;
+e127;PAG*JoaoBatista;DEBITO;Não categorizado;sem_ancora;PagSeguro para pessoa física sem contexto
+e128;CONSULTORIO DR RICARDO MENDES;DEBITO;Saúde;claro;
+e129;PIX ENVIADO IMOBILIARIA LOPES ALUGUEL;DEBITO;Moradia;claro;
+e130;KUMON UNIDADE VILA MARIANA;DEBITO;Educação;claro;
+e131;MP*LANCHONETEDOZE;DEBITO;Alimentação;abreviacao;MP = Mercado Pago, lanchonete
+e132;Compra debito - Riachuelo Shopping Tambore;DEBITO;Compras;claro;
+e133;RESTITUICAO IRPF 2026 LOTE 3;CREDITO;Receita;claro;
+e134;COMB POSTO SAO CRISTOV;DEBITO;Transporte;abreviacao;COMB = combustível
+e135;IOF COMPRA INTERNACIONAL;DEBITO;Serviços;ambiguo;Imposto acompanha a compra no exterior, sem ela vira custo bancário e vai para Serviços
+e136;AIRBNB * HMQ8ZT4K;DEBITO;Lazer;claro;Hospedagem presumida como viagem a passeio
+e137;PICPAY*ANA PAULA S;DEBITO;Não categorizado;sem_ancora;PicPay para pessoa física sem contexto
+e138;HOSP STA CATARINA;DEBITO;Saúde;abreviacao;Hospital Santa Catarina
+e139;ULTRAGAZ GAS LP;DEBITO;Moradia;claro;Botijão de gás
+e140;Pag boleto - Universidade Presbiteriana Mackenzie;DEBITO;Educação;claro;
+e141;RAPPI BRASIL INTERMEDIACAO DE NEGOCIOS;DEBITO;Alimentação;claro;Rappi também entrega farmácia, mas é sobretudo delivery de comida
+e142;KABUM COMERCIO ELETRONICO LIMEIRA;DEBITO;Compras;claro;
+e143;CRED INSS APOSENT;CREDITO;Receita;abreviacao;Aposentadoria do INSS
+e144;PAG BOLETO DETRAN SP IPVA 2026;DEBITO;Transporte;claro;
+e145;OPENAI *CHATGPT SUBSCR;DEBITO;Serviços;claro;
+e146;BOOKING.COM HOTEL;DEBITO;Lazer;claro;
+e147;SUMUP *MLG;DEBITO;Não categorizado;sem_ancora;Maquininha SumUp só com sigla do lojista
+e148;Laboratorio Sabin Brasilia;DEBITO;Saúde;claro;
+e149;PAG BOLETO TAXA DE LIXO PREFEITURA SALVADOR;DEBITO;Moradia;claro;
+e150;DUOLINGO*SUPER;DEBITO;Educação;claro;
+e151;COMPRA DEB SAMS CLUB 5612 SAO BERNARDO;DEBITO;Alimentação;ambiguo;Clube atacadista vende eletrônicos, mas a cesta típica é de alimentos
+e152;DECATHLON MORUMBI;DEBITO;Compras;ambiguo;Material esportivo lembra Lazer, mas é varejo
+e153;CREDITO CASHBACK;CREDITO;Receita;claro;
+e154;OFICINA MECANICA IRMAOS SOUZA;DEBITO;Transporte;claro;
+e155;PRUDENTIAL DO BR SEG VIDA;DEBITO;Serviços;abreviacao;SEG = seguro de vida
+e156;EVENTIM BRASIL SAO PAULO;DEBITO;Lazer;claro;
+e157;DEB AUT CONV 004417;DEBITO;Não categorizado;sem_ancora;Débito automático só com número de convênio
+e158;COMPRA CARTAO PANVEL 112 PORTO ALEGRE;DEBITO;Saúde;ambiguo;Farmácia com perfumaria, medicamento é o mais provável
+e159;NATURGY CEG RIO;DEBITO;Moradia;claro;Gás encanado
+e160;COMPRA CARTAO OUTBACK STEAKHOUSE SHOP MORUMBI;DEBITO;Alimentação;claro;
+e161;NETSHOES BR;DEBITO;Compras;claro;
+e162;DOC RECEBIDO 341 1522;CREDITO;Receita;sem_ancora;Crédito sem remetente identificado vai para Receita
+e163;Recarga Bilhete Unico SPTrans;DEBITO;Transporte;claro;
+e164;ADOBE *CREATIVE CLOUD;DEBITO;Serviços;claro;
+e165;GLOBOPLAY;DEBITO;Lazer;claro;
+e166;PAGAMENTO FATURA CARTAO;DEBITO;Não categorizado;sem_ancora;Fatura agrega gastos de várias categorias
+e167;HIPERM EXTRA STO ANDRE;DEBITO;Alimentação;abreviacao;Hipermercado Extra, Santo André
+e168;MP*LOJADOCELULAR;DEBITO;Compras;abreviacao;MP = Mercado Pago, loja de celular
+e169;PIX RECEBIDO STUDIO DESIGN ME;CREDITO;Receita;claro;
+e170;CONECTCAR PEDAGIO;DEBITO;Transporte;claro;
+e171;JUROS LIMITE DA CONTA;DEBITO;Serviços;claro;Encargo bancário
+e172;BETO CARRERO WORLD PENHA SC;DEBITO;Lazer;claro;
+e173;PIX QR CODE ESTATICO 8F2D1A;DEBITO;Não categorizado;sem_ancora;QR code sem nome do recebedor
+e174;ATACADAO 345 BELO HORIZONTE MG;DEBITO;Alimentação;claro;
+e175;COMPRA CARTAO ZARA BRASIL LTDA;DEBITO;Compras;claro;
+e176;JCP BBAS3;CREDITO;Receita;abreviacao;Juros sobre capital próprio
+e177;CENTRO AUTOMOTIVO PIT STOP TROCA DE OLEO;DEBITO;Transporte;claro;
+e178;LAVANDERIA 5ASEC JARDIM BOTANICO;DEBITO;Serviços;claro;
+e179;BAR DO JUAREZ VILA MADALENA;DEBITO;Lazer;claro;
+e180;STN*IPT 4471;DEBITO;Não categorizado;sem_ancora;Maquininha Stone com sigla ilegível
+e181;REST E PIZZ BELLA NAPO;DEBITO;Alimentação;abreviacao;Restaurante e pizzaria com nome truncado
+e182;TOK&STOK SHOP D PEDRO;DEBITO;Compras;ambiguo;Móveis para a casa lembram Moradia, mas Moradia fica só com custos fixos do imóvel
+e183;Pix recebido - Fernando Alves Rocha;CREDITO;Receita;claro;
+e184;ZUL DIGITAL ESTACIONAMENTO ROTATIVO;DEBITO;Transporte;claro;
+e185;BARBEARIA DOM BIGODE;DEBITO;Serviços;claro;Cuidado pessoal vai para Serviços
+e186;SYMPLA*SHOW ROUPA NOVA;DEBITO;Lazer;claro;
+e187;PAG BOLETO BANCO BRADESCO SA;DEBITO;Não categorizado;sem_ancora;Banco emissor não indica o que foi pago
+e188;HORTIFRUTI LJ 22 NITEROI RJ;DEBITO;Alimentação;claro;
+e189;SHEIN *SHEIN.COM;DEBITO;Compras;claro;
+e190;PIX DEVOLVIDO E7F3K92;CREDITO;Receita;sem_ancora;Devolução de PIX conta como reembolso
+e191;PAG BOLETO MULTA DE TRANSITO DER MG;DEBITO;Transporte;claro;
+e192;CORREIOS AG CENTRAL CURITIBA;DEBITO;Serviços;claro;
+e193;COMPRA DEB ACOUGUE CASA DE CARNES BOI GORDO;DEBITO;Alimentação;claro;
+e194;C&A MODAS LJ 455 CURITIBA PR;DEBITO;Compras;claro;
+e195;CREDITO FGTS SAQUE ANIVERSARIO;CREDITO;Receita;claro;
+e196;CARTORIO 2 OFICIO DE NOTAS;DEBITO;Serviços;claro;
+e197;STARBUCKS AV PAULISTA SAO PAULO;DEBITO;Alimentação;claro;
+e198;FAST SHOP SA MORUMBI;DEBITO;Compras;claro;
+e199;Supermercados BH Comercio de Alimentos Contagem;DEBITO;Alimentação;claro;
+e200;COMPRA CARTAO BURGER KING 1187 RECIFE PE;DEBITO;Alimentação;claro;
+e201;COMPRA CARTAO CIA ZAFFARI BOURBON IPIRANGA PORTO ALEGRE RS;DEBITO;Alimentação;claro;
+e202;ODONTOPREV;DEBITO;Saúde;claro;Plano odontológico
+e203;ACADEMIA BODYTECH;DEBITO;Saúde;claro;Academia vai para Saúde
