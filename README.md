@@ -328,6 +328,24 @@ teste de integração com um duplo do Supabase, afirmando sobre os filtros que
 sustentam a segurança: `is categoria_id null` para idempotência e a rejeição de
 `categoriaId` que o usuário não enxerga.
 
+### Isolamento por usuário contra o banco real
+
+O RLS é testado contra um Postgres de verdade, no Supabase local (precisa de
+Docker):
+
+```bash
+cp supabase/config.toml.example supabase/config.toml   # se ainda não existir
+npm run supabase:local     # sobe Postgres, Auth e a API e aplica as migrations
+npm run test:integracao
+```
+
+O teste cria dois usuários e, em cada uma das seis tabelas com dado financeiro,
+confere que A não lê, não altera, não apaga e não cria linhas de B, nem passa
+uma linha própria para B, e que consegue fazer isso com as próprias. Também
+cobre as linhas do sistema em `categorias` e `regras_categorizacao` (todos
+leem, ninguém altera) e o acesso sem sessão. São 73 casos, em
+`tests/integracao/`, rodando num job próprio do CI.
+
 ## Roadmap concluído
 
 | Fase  | Entrega                                              |
