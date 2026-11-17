@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
+    "test:integracao": "vitest run --config vitest.integracao.config.ts",
+    "supabase:local": "supabase start -x realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor",
     "db:migrate": "supabase db push --linked"
   },
   "dependencies": {

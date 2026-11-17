@@ -24,3 +24,22 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+
+  # Isolamento por usuário (RLS) contra um Postgres real, num job à parte para
+  # o job de testes unitários continuar rápido e sem infraestrutura.
+  integracao:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Supabase local com as migrations
+        run: |
+          cp supabase/config.toml.example supabase/config.toml
+          npm run supabase:local
+      - name: Testes de integração (RLS)
+        run: npm run test:integracao
