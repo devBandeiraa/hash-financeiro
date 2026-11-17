@@ -73,7 +73,7 @@ npm run dev            # o endereço local aparece no terminal
 | Camada       | O que é usado                                                                                                     |
 | ------------ | ----------------------------------------------------------------------------------------------------------------- |
 | Aplicação    | TanStack Start (React 19 + Vite); rotas de arquivo em `src/routes`                                                |
-| Servidor     | server functions (`createServerFn`) em `src/lib/hash-financeiro.functions.ts`                                     |
+| Servidor     | server functions (`createServerFn`) em `src/lib/servico/`, um arquivo por domínio                                 |
 | Banco        | Postgres no Supabase, com RLS por `usuario_id` em toda tabela de dado financeiro                                  |
 | Schema       | migrations SQL em `supabase/migrations`, aplicadas com `npm run db:migrate`                                       |
 | Autenticação | Supabase Auth (e-mail/senha); Google via `@lovable.dev/cloud-auth-js`; `requireSupabaseAuth` nas server functions |
@@ -102,7 +102,9 @@ src/lib/categorize/ai/  fallback por IA: sugerir, palavra-chave, aplicar
 src/lib/ai/           modelo.server.ts (timeout/retry/parse) + provedores/
 src/lib/insights/     agregar.ts — agregação mensal e prompt (funções puras)
 src/lib/types/        contratos de domínio compartilhados
-src/lib/hash-financeiro.functions.ts   camada de serviço (server functions)
+src/lib/servico/      camada de serviço (server functions), um arquivo por domínio:
+                      contas, categorias, importacao, transacoes, dashboard,
+                      privacidade, ia, agente; hash-financeiro.functions.ts reexporta
 src/lib/capacidades/  implementação única, compartilhada por MCP e agente
 src/lib/agente/       loop de tool use, prompt, leitura do streaming
 src/lib/mcp/          servidor MCP com OAuth (adaptador sobre capacidades)
