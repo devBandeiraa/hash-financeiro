@@ -48,10 +48,25 @@ Pré-requisitos: Node.js 22 e um projeto Supabase (o plano gratuito serve).
 ```bash
 npm install
 cp .env.example .env   # preencha com as chaves do seu projeto Supabase
+```
+
+Antes do primeiro acesso, aplique as migrations de `supabase/migrations` no
+banco do projeto. A CLI do Supabase vem como dependência de desenvolvimento:
+
+```bash
+cp supabase/config.toml.example supabase/config.toml   # troque SEU_PROJECT_REF pelo ref do projeto
+npx supabase login
+npx supabase link --project-ref SEU_PROJECT_REF        # pede a senha do banco
+npm run db:migrate                                     # aplica, em ordem, só o que ainda não foi aplicado
+```
+
+Depois:
+
+```bash
 npm run dev            # o endereço local aparece no terminal
 ```
 
-Antes do primeiro acesso, aplique no banco do seu projeto os arquivos de `supabase/migrations`, em ordem, pelo SQL Editor do Supabase.
+<!-- TODO(jhordan): rodar `npm run db:migrate` contra um projeto Supabase real e confirmar o fluxo acima. Num banco em que as migrations já foram coladas à mão pelo SQL Editor, a CLI não tem o histórico e tentaria reaplicá-las: marque-as como aplicadas uma vez com `npx supabase migration repair --linked --status applied <versão>` para cada arquivo. -->
 
 ## Stack
 
@@ -154,7 +169,9 @@ ressalvas registradas por honestidade:
 - **No tier gratuito o Google pode usar os prompts para treinar modelo.** É
   exatamente por isso que a minimização acima não é opcional neste projeto.
 - A alternativa (`IA_PROVEDOR=anthropic`) é paga, mas não treina em input de
-  API. Custo estimado: ~R$ 0,02 por importação com `claude-haiku-4-5`.
+  API. O padrão é `claude-haiku-5-5`, o mais barato da linha atual
+  (US$ 0,10 / US$ 0,50 por milhão de tokens de entrada/saída).
+  <!-- TODO(jhordan): medir o custo real de uma importação com claude-haiku-5-5 e publicar aqui. -->
 
 ### Degradação
 
@@ -231,7 +248,7 @@ continua marcando `usuario`.
 | Escopo              | pedido fora de finanças pessoais é recusado sem chamar ferramenta                  |
 | Falha de ferramenta | volta como resultado, não como exceção — a conversa não cai                        |
 
-### Dois detalhes que só apareceram contra a API real
+### Três detalhes que só apareceram contra a API real
 
 Ficam registrados porque custaram tempo e não aparecem com mock:
 

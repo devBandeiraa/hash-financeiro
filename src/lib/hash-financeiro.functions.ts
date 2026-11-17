@@ -4,9 +4,11 @@
  * garante o isolamento. Nenhum dado financeiro é logado.
  */
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 import { parseCsv } from "@/lib/import/csv.parser";
 import { parsePdfTexto } from "@/lib/import/pdf.parser";
 import { calcularHashDedupe } from "@/lib/import/dedupe";
@@ -110,9 +112,9 @@ export const listarCategorias = createServerFn({ method: "GET" })
     }));
   });
 
-async function buscarRegras(supabase: {
-  from: (t: "regras_categorizacao") => any;
-}): Promise<RegraCategorizacao[]> {
+async function buscarRegras(
+  supabase: Pick<SupabaseClient<Database>, "from">,
+): Promise<RegraCategorizacao[]> {
   const { data, error } = await supabase
     .from("regras_categorizacao")
     .select("id, usuario_id, palavra_chave, categoria_id, prioridade, ativa, origem");

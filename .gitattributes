@@ -1,0 +1,7 @@
+# LF em todo checkout, inclusive no Windows: o prettier exige LF e o CI roda
+# em Linux. Sem isto, core.autocrlf=true transforma cada linha em erro de lint.
+* text=auto eol=lf
+*.ico binary
+*.png binary
+*.jpg binary
+*.pdf binary

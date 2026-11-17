@@ -20,10 +20,7 @@ export function ordenarRegras(regras: RegraCategorizacao[]): RegraCategorizacao[
 }
 
 /** Devolve o categoriaId da primeira regra que casa, ou null. */
-export function categorizar(
-  descricao: string,
-  regras: RegraCategorizacao[],
-): string | null {
+export function categorizar(descricao: string, regras: RegraCategorizacao[]): string | null {
   const alvo = normalizarDescricao(descricao);
   if (!alvo) return null;
 

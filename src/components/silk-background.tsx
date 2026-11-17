@@ -268,8 +268,8 @@ void main() { gl_Position = vec4(a_position, 0.0, 1.0); }
 `;
 
 const COLORS = [
-  0.008, 0.004, 0.039, 0.016, 0.02, 0.18, 0.239, 0.173, 0.553, 0.569, 0.42, 0.749,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0.008, 0.004, 0.039, 0.016, 0.02, 0.18, 0.239, 0.173, 0.553, 0.569, 0.42, 0.749, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0,
 ];
 
 export function SilkBackground({
@@ -279,7 +279,6 @@ export function SilkBackground({
   className?: string;
   fixed?: boolean;
 }) {
-
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -319,11 +318,7 @@ export function SilkBackground({
 
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([-1, -1, 3, -1, -1, 3]),
-      gl.STATIC_DRAW,
-    );
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(prog, "a_position");
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
@@ -400,4 +395,3 @@ export function SilkBackground({
     />
   );
 }
-

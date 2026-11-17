@@ -12,7 +12,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { ErroProvedor, IaIndisponivelError } from "../modelo.server";
 import type { ClienteModelo } from "../modelo.server";
 
-const MODELO_PADRAO = "claude-opus-5";
+const MODELO_PADRAO = "claude-haiku-5-5";
 const MAX_TOKENS_PADRAO = 16_000;
 
 function normalizarErro(erro: unknown): ErroProvedor {
@@ -51,7 +51,7 @@ export function criarClienteAnthropic(): ClienteModelo {
             messages: [{ role: "user", content: pedido.user }],
             output_config: {
               effort: pedido.esforco === "baixo" ? "low" : "medium",
-              // Prefill de assistant retorna 400 no Opus 5: o formato vem daqui.
+              // Prefill de assistant retorna 400 nos modelos atuais: o formato vem daqui.
               ...(pedido.esquema ? { format: zodOutputFormat(pedido.esquema) } : {}),
             },
           },
@@ -62,7 +62,7 @@ export function criarClienteAnthropic(): ClienteModelo {
           throw new IaIndisponivelError("modelo recusou o pedido");
         }
 
-        // Só os blocos de texto: no Opus 5 o raciocínio vem como bloco à parte.
+        // Só os blocos de texto: nos modelos atuais o raciocínio vem como bloco à parte.
         return resposta.content
           .filter((bloco): bloco is Anthropic.TextBlock => bloco.type === "text")
           .map((bloco) => bloco.text)
