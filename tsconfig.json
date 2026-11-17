@@ -3,6 +3,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "tests/**/*.ts",
+    "evals/**/*.ts",
     "vite.config.ts",
     "vitest.integracao.config.ts",
     "eslint.config.js"

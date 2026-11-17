@@ -28,7 +28,7 @@ import type {
  *
  * Não use `gemini-2.5-flash`: o Google o aposentou para chaves novas (404).
  */
-const MODELO_PADRAO = "gemini-3.1-flash-lite";
+export const MODELO_PADRAO = "gemini-3.1-flash-lite";
 
 /**
  * `responseJsonSchema` aceita JSON Schema, mas só um subconjunto de chaves —
