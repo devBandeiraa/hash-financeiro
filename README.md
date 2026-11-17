@@ -70,16 +70,28 @@ npm run dev            # o endereço local aparece no terminal
 
 ## Stack
 
-O plano original previa Express + Prisma + Next.js. O ambiente de execução é
-**TanStack Start (React 19 + Vite)** com **Postgres gerenciado (Lovable
-Cloud/Supabase)**, mantendo equivalência conceitual:
+| Camada       | O que é usado                                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Aplicação    | TanStack Start (React 19 + Vite); rotas de arquivo em `src/routes`                                                |
+| Servidor     | server functions (`createServerFn`) em `src/lib/hash-financeiro.functions.ts`                                     |
+| Banco        | Postgres no Supabase, com RLS por `usuario_id` em toda tabela de dado financeiro                                  |
+| Schema       | migrations SQL em `supabase/migrations`, aplicadas com `npm run db:migrate`                                       |
+| Autenticação | Supabase Auth (e-mail/senha); Google via `@lovable.dev/cloud-auth-js`; `requireSupabaseAuth` nas server functions |
+| Validação    | Zod                                                                                                               |
+| Interface    | Tailwind CSS 4, componentes shadcn/ui (Radix), Recharts                                                           |
+| IA           | Gemini (`@google/genai`) por padrão; Anthropic (`@anthropic-ai/sdk`) como alternativa                             |
+| MCP          | `@lovable.dev/mcp-js`, com as ferramentas definidas em `src/lib/mcp`                                              |
+| Testes       | Vitest                                                                                                            |
 
-| Plano original      | Implementação                                              |
-| ------------------- | ---------------------------------------------------------- |
-| Express controllers | `createServerFn` em `src/lib/hash-financeiro.functions.ts` |
-| Prisma schema       | `prisma/schema.prisma` (documentação) + migrations SQL     |
-| Middleware de auth  | `requireSupabaseAuth` + RLS por `usuario_id` no banco      |
-| Next.js App Router  | Rotas de arquivo em `src/routes`                           |
+O projeto começou num scaffold do [Lovable](https://lovable.dev). Vieram dele a
+configuração de build (`@lovable.dev/vite-tanstack-config`), a integração com o
+Supabase e o login com Google (`src/integrations/`), o tratamento de erro do
+servidor (`src/server.ts`, `src/start.ts`, `src/lib/error-*.ts`), os componentes
+de `src/components/ui` (shadcn/ui) e as rotas HTTP do MCP geradas por
+`@lovable.dev/mcp-js`. Foram escritos à mão os parsers de extrato
+(`src/lib/import`), o motor de regras (`src/lib/categorize`), a camada de IA
+(`src/lib/ai`, `src/lib/categorize/ai`, `src/lib/insights`), o servidor MCP
+(`src/lib/mcp`, `src/lib/capacidades`) e o agente (`src/lib/agente`).
 
 ## Estrutura
 
