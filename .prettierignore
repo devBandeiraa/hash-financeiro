@@ -6,3 +6,10 @@ pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+
+# Código gerado (Lovable, Supabase CLI e @lovable.dev/mcp-js): é reescrito
+# pelas ferramentas, então formatá-lo à mão não dura.
+src/integrations/
+src/routes/mcp.ts
+src/routes/\[.mcp\]/
+src/routes/\[.well-known\]/

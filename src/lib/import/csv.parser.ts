@@ -110,9 +110,7 @@ export function parseCsv(conteudo: string): ResultadoParseCsv {
   const cabecalho = parseLinhaCsv(brutas[0]!, sep);
   const mapa = mapearColunas(cabecalho);
   if (!mapa) {
-    throw new Error(
-      "Não encontrei as colunas de data, descrição e valor no cabeçalho do arquivo.",
-    );
+    throw new Error("Não encontrei as colunas de data, descrição e valor no cabeçalho do arquivo.");
   }
 
   const linhas: LinhaNormalizada[] = [];
