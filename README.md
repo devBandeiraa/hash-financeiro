@@ -346,6 +346,35 @@ cobre as linhas do sistema em `categorias` e `regras_categorizacao` (todos
 leem, ninguém altera) e o acesso sem sessão. São 73 casos, em
 `tests/integracao/`, rodando num job próprio do CI.
 
+### Eval da categorização
+
+`evals/categorizacao.csv` tem 203 descrições sintéticas de extrato bancário
+brasileiro, cada uma com a categoria esperada: 114 com nome claro e 89 difíceis
+(36 abreviadas, 29 ambíguas, 24 sem âncora). O conjunto foi escrito sem
+consultar as regras do seed, para não medir as regras contra si mesmas, e as
+regras não foram ajustadas a ele. Nenhum dado é real.
+
+| Modo                    | Acerto geral   | Cobertura      | Acerto quando propõe | Data       | Modelo                  |
+| ----------------------- | -------------- | -------------- | -------------------- | ---------- | ----------------------- |
+| Só motor de regras      | 27,1% (55/203) | 19,7% (40/203) | 87,5% (35/40)        | 17/11/2026 | nenhum (determinístico) |
+| Regras + fallback de IA | —              | —              | —                    | —          | —                       |
+
+<!-- TODO(jhordan): com GEMINI_API_KEY no .env, rodar `npm run eval` e preencher a linha "Regras + fallback de IA" com os números de evals/resultados/regras-ia.md (data e modelo saem no relatório). -->
+
+Cobertura é a parte das descrições em que o sistema propôs alguma categoria;
+o resto fica "Não categorizado". O motor de regras erra pouco quando decide,
+mas decide em só um quinto do conjunto. Os 55 acertos gerais incluem as 20
+descrições cujo rótulo esperado é "Não categorizado", que o motor acerta por
+não decidir. Por caso, no modo só regras: claro 27,2%, sem âncora 70,8%,
+ambíguo 13,8%, abreviação 8,3%. Os erros, linha a linha, estão em
+`evals/resultados/`.
+
+```bash
+npm run supabase:local   # as regras e categorias vêm do banco migrado
+npm run eval:regras      # só regras; roda no CI com piso de 27%
+npm run eval             # os dois modos; o modo com IA consome cota e é pulado sem chave
+```
+
 ## Roadmap concluído
 
 | Fase  | Entrega                                              |
