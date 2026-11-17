@@ -231,7 +231,7 @@ continua marcando `usuario`.
 | Escopo              | pedido fora de finanças pessoais é recusado sem chamar ferramenta                  |
 | Falha de ferramenta | volta como resultado, não como exceção — a conversa não cai                        |
 
-### Dois detalhes que só apareceram contra a API real
+### Três detalhes que só apareceram contra a API real
 
 Ficam registrados porque custaram tempo e não aparecem com mock:
 
