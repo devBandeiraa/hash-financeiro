@@ -72,7 +72,7 @@ Depois:
 npm run dev            # o endereço local aparece no terminal
 ```
 
-<!-- TODO(jhordan): rodar `npm run db:migrate` contra um projeto Supabase real e confirmar o fluxo acima. Num banco em que as migrations já foram coladas à mão pelo SQL Editor, a CLI não tem o histórico e tentaria reaplicá-las: marque-as como aplicadas uma vez com `npx supabase migration repair --linked --status applied <versão>` para cada arquivo. -->
+<!-- TODO(jhordan): rodar `npm run db:migrate` contra um projeto Supabase real e confirmar o fluxo acima. Num banco em que as migrations já foram coladas à mão pelo SQL Editor, a CLI não tem o histórico e tentaria reaplicá-las: marque-as como aplicadas uma vez com `npx supabase migration repair --linked --status applied <versão>` só para as cinco coladas à mão (até 20260807120000). A 20261117120000 é nova e deve ser aplicada pelo db:migrate; depois, rode no SQL Editor a consulta do cabeçalho dela para conferir que não há referências cruzadas antigas. -->
 
 Para publicar (Cloudflare Workers, plano gratuito), veja
 [docs/deploy.md](./docs/deploy.md): passo a passo, variáveis de ambiente e o
@@ -304,7 +304,8 @@ em `tipo` (`DEBITO` / `CREDITO`). Seed com 10 categorias padrão e 37 regras.
 Aplicado desde a Fase 1, não no fim (detalhes em [SECURITY.md](./SECURITY.md)):
 
 1. **Isolamento no banco**, não só no código: Row Level Security por
-   `usuario_id` em todas as tabelas de dado financeiro.
+   `usuario_id` em todas as tabelas de dado financeiro, e escrita só com conta
+   e categoria do próprio usuário (ou categoria do sistema).
 2. **Nada sensível em log**: nem descrição, nem valor, nem nome de arquivo —
    apenas contadores e IDs.
 3. **Arquivo em memória**: o extrato é parseado e descartado; só as transações
@@ -355,8 +356,9 @@ O teste cria dois usuários e, em cada uma das seis tabelas com dado financeiro,
 confere que A não lê, não altera, não apaga e não cria linhas de B, nem passa
 uma linha própria para B, e que consegue fazer isso com as próprias. Também
 cobre as linhas do sistema em `categorias` e `regras_categorizacao` (todos
-leem, ninguém altera) e o acesso sem sessão. São 73 casos, em
-`tests/integracao/`, rodando num job próprio do CI.
+leem, ninguém altera), o acesso sem sessão e as referências: A não grava
+transação na conta de B nem usa categoria de B em transação ou regra. São 80
+casos, em `tests/integracao/`, rodando num job próprio do CI.
 
 ### Eval da categorização
 

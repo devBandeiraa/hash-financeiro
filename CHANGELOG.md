@@ -62,11 +62,17 @@ e mensagens no padrão [Conventional Commits](https://www.conventionalcommits.or
 
 - O servidor MCP lia `VITE_SUPABASE_PROJECT_REF`, variável que não existe;
   passa a ler `VITE_SUPABASE_PROJECT_ID`, sem valor embutido no código.
+- As políticas de RLS de `transacoes` e `regras_categorizacao` conferiam só
+  `usuario_id`. Uma linha podia apontar para a conta ou a categoria de outro
+  usuário cujo UUID se conhecesse, e o `ON DELETE CASCADE` da conta do outro
+  apagava a transação. Agora a conta tem de ser do usuário e a categoria, do
+  usuário ou do sistema (migration `20261117120000`). Linhas gravadas antes
+  não são verificadas; a migration traz a consulta para conferir.
 
 ### Qualidade, segurança e documentação
 
 - CI no GitHub Actions: tipos, lint, testes e build a cada push.
-- Teste de integração do RLS contra o Supabase local (73 casos), em job
+- Teste de integração do RLS contra o Supabase local (80 casos), em job
   próprio no CI (`npm run test:integracao`).
 - Eval da categorização com 203 descrições sintéticas (`npm run eval`); o modo
   só regras roda no CI com piso de 27%.
@@ -79,12 +85,6 @@ e mensagens no padrão [Conventional Commits](https://www.conventionalcommits.or
 - `prisma/schema.prisma` removido; o schema vive nas migrations.
 - README declara a stack real e a origem do scaffold; decisões de arquitetura
   registradas em `docs/adr`; licença MIT.
-
-### Conhecido
-
-- As políticas de RLS conferem só `usuario_id`. Uma transação ou regra pode
-  apontar para conta ou categoria de outro usuário cujo UUID se conheça, e o
-  `ON DELETE CASCADE` da conta do outro apaga essa transação.
 
 ## [0.1.0] - 2026
 

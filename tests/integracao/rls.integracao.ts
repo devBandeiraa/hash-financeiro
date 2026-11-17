@@ -368,3 +368,99 @@ describe.each(["categorias", "regras_categorizacao"] as const)(
     });
   },
 );
+
+// Uma linha de A não pode apontar para conta ou categoria de B. Sem essa
+// trava, A grava uma transação na conta de B e, quando B apaga a conta, o
+// ON DELETE CASCADE apaga a transação de A.
+describe("referências a dados de outro usuário", () => {
+  let categoriaSistema: string;
+
+  beforeAll(async () => {
+    const { data, error } = await de(admin, "categorias")
+      .select("id")
+      .is("usuario_id", null)
+      .limit(1)
+      .single();
+    if (error) throw new Error(`sem categoria do sistema: ${error.message}`);
+    categoriaSistema = (data as { id: string }).id;
+  });
+
+  function transacaoDeA(extra: Linha): Linha {
+    return {
+      usuario_id: a.usuario.id,
+      conta_id: a.contaId,
+      data: "2026-01-21",
+      descricao: "REFERENCIA",
+      valor: 1,
+      tipo: "DEBITO",
+      origem: "MANUAL",
+      hash_dedupe: randomUUID(),
+      ...extra,
+    };
+  }
+
+  it("A não cria transação na conta de B", async () => {
+    const { error } = await de(a.usuario.cliente, "transacoes").insert(
+      transacaoDeA({ conta_id: b.contaId }),
+    );
+    expect(error?.code).toBe(VIOLACAO_RLS);
+  });
+
+  it("A não cria transação com categoria de B", async () => {
+    const { error } = await de(a.usuario.cliente, "transacoes").insert(
+      transacaoDeA({ categoria_id: b.categoriaId }),
+    );
+    expect(error?.code).toBe(VIOLACAO_RLS);
+  });
+
+  it("A não move a própria transação para a conta ou a categoria de B", async () => {
+    for (const patch of [{ conta_id: b.contaId }, { categoria_id: b.categoriaId }]) {
+      const { error } = await de(a.usuario.cliente, "transacoes")
+        .update(patch)
+        .eq("id", a.ids.transacoes);
+      expect(error?.code).toBe(VIOLACAO_RLS);
+    }
+    const real = await linhaReal("transacoes", a.ids.transacoes);
+    expect(real?.["conta_id"]).toBe(a.contaId);
+    expect(real?.["categoria_id"]).toBe(a.categoriaId);
+  });
+
+  it("A cria transação com categoria própria, do sistema ou sem categoria", async () => {
+    for (const categoria_id of [a.categoriaId, categoriaSistema, null]) {
+      const { error } = await de(a.usuario.cliente, "transacoes").insert(
+        transacaoDeA({ categoria_id }),
+      );
+      expect(error).toBeNull();
+    }
+  });
+
+  it("A não cria regra com categoria de B", async () => {
+    const { error } = await de(a.usuario.cliente, "regras_categorizacao").insert({
+      usuario_id: a.usuario.id,
+      palavra_chave: `ref-${randomUUID()}`,
+      categoria_id: b.categoriaId,
+    });
+    expect(error?.code).toBe(VIOLACAO_RLS);
+  });
+
+  it("A não aponta a própria regra para a categoria de B", async () => {
+    const { error } = await de(a.usuario.cliente, "regras_categorizacao")
+      .update({ categoria_id: b.categoriaId })
+      .eq("id", a.ids.regras_categorizacao);
+    expect(error?.code).toBe(VIOLACAO_RLS);
+    expect(
+      (await linhaReal("regras_categorizacao", a.ids.regras_categorizacao))?.["categoria_id"],
+    ).toBe(a.categoriaId);
+  });
+
+  it("A cria regra com categoria própria ou do sistema", async () => {
+    for (const categoria_id of [a.categoriaId, categoriaSistema]) {
+      const { error } = await de(a.usuario.cliente, "regras_categorizacao").insert({
+        usuario_id: a.usuario.id,
+        palavra_chave: `ref-${randomUUID()}`,
+        categoria_id,
+      });
+      expect(error).toBeNull();
+    }
+  });
+});
