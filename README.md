@@ -377,6 +377,14 @@ npm run eval:regras      # só regras; roda no CI com piso de 27%
 npm run eval             # os dois modos; o modo com IA consome cota e é pulado sem chave
 ```
 
+## Decisões de arquitetura
+
+As decisões descritas acima estão registradas, uma por arquivo, em
+[`docs/adr`](./docs/adr): determinístico antes da IA, IA propõe e usuário
+confirma, capacidades únicas para MCP e agente, minimização de dado, RLS no
+banco e cache de insights por impressão digital. O histórico de versões está no
+[CHANGELOG](./CHANGELOG.md).
+
 ## Roadmap concluído
 
 | Fase  | Entrega                                              |
